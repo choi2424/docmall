@@ -50,7 +50,7 @@
       <h3 class="box-title">회원가입</h3>
       </div>
       
-      <form role="form" id="joinForm" method="post" action="">
+      <form role="form" id="joinForm" method="post" action="/member/join">
       <div class="box-body">
         <div class="form-group row">
           <label for="mbsp_id" class="col-2">아이디</label>
@@ -128,7 +128,7 @@
       </div>
       
       <div class="box-footer">
-      <button type="submit" id="btnJoin" class="btn btn-primary">Submit</button>
+      <button type="button" id="btnJoin" class="btn btn-primary">회원가입</button>
       </div>
       </form>
       </div>
@@ -245,7 +245,7 @@
     let joinForm = $("#joinForm");// form 태그 참조 <form role="form" id="joinForm" method="post" action="">
 
     // document.getElementById("idCheck");
-    $("#idCheck").click(function() {
+    $("#idCheck").click(() => {
       // alert("아이디 중복체크");
       if($("#mbsp_id").val() == ""){
         alert("아이디를 입력하세요");
@@ -344,7 +344,7 @@
       }
 
       // 폼 전송작업
-      // joinForm.submit();
+      joinForm.submit();
     });
 
   });

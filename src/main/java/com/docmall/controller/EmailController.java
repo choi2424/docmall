@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,7 @@ public class EmailController {
 	private final EmailService emailService; 
 	
 	// 메일인증코드 요청주소
-	@GetMapping("/authcode")
+	@GetMapping("/authCode")
 	public ResponseEntity<String> authSend(EmailDTO dto,HttpSession session){
 		
 		log.info("이메일정보 : " + dto);
@@ -49,6 +50,33 @@ public class EmailController {
 			entity = new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR); // 500
 		}
 		
-		return entity;
+		return entity;		
 	}
+	
+		// 인증코드 확인 = 세션형태로 저장한 정보를 이용
+		@GetMapping("/confirmAuthCode")
+		public ResponseEntity<String> confirmAuthcode(String authCode,HttpSession session) {
+			
+			ResponseEntity<String> entity = null;
+			
+		
+			//String sAuthCode = "";
+			if(session.getAttribute("authCode") != null) {
+				// 인증일치 여부
+				if(authCode.equals(session.getAttribute("authCode"))) {
+					entity = new ResponseEntity<String>("success",HttpStatus.OK); 
+				}else {
+					entity = new ResponseEntity<String>("fail",HttpStatus.OK);
+				}
+			}else {
+				// 세션이 소멸되었을때
+				entity = new ResponseEntity<String>("request",HttpStatus.OK);
+			}
+			
+			
+			
+			return entity;
+		}
+		
+		
 }

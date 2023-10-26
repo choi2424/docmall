@@ -50,7 +50,7 @@
       <h3 class="box-title">회원가입</h3>
       </div>
       
-      <form role="form">
+      <form role="form" id="joinForm" method="post" action="">
       <div class="box-body">
         <div class="form-group row">
           <label for="mbsp_id" class="col-2">아이디</label>
@@ -89,12 +89,12 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="authcode" class="col-2">메일인증</label>
+          <label for="authCode" class="col-2">메일인증</label>
           <div class="col-8">
-            <input type="text" class="form-control" name="authcode" id="authcode" placeholder="인증코드 입력">
+            <input type="text" class="form-control" name="authCode" id="authCode" placeholder="인증코드 입력">
           </div>
           <div class="col-2">
-            <button type="button" class="btn btn-outline-info" id="">인증확인</button>
+            <button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증확인</button>
           </div>
         </div>
         <div class="form-group row">
@@ -128,7 +128,7 @@
       </div>
       
       <div class="box-footer">
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" id="btnJoin" class="btn btn-primary">Submit</button>
       </div>
       </form>
       </div>
@@ -241,6 +241,8 @@
   $(document).ready(function() {
 
     let useIDCheck = false; // 아이디 중복체크 사용유무 확인
+    let isConfirmAuth = false; // 이메일 중복체크 사용유무 확인
+    let joinForm = $("#joinForm");// form 태그 참조 <form role="form" id="joinForm" method="post" action="">
 
     // document.getElementById("idCheck");
     $("#idCheck").click(function() {
@@ -257,9 +259,10 @@
         type : "get" ,
         dataType : "text" ,
         data : {mbsp_id : $("#mbsp_id").val()} ,
-        success : function(result) {
+        success : (result) => {
           if(result == "yes"){
             alert("아이디 사용가능");
+            useIDCheck = true;
           }else{
             alert("아이디 사용불가능");
             useIDCheck = false;
@@ -279,8 +282,9 @@
         return;
       }
 
+
       $.ajax({
-        url : "/email/authcode",
+        url : "/email/authCode",
         type : "get" ,
         dataType : "text", // 스프링에서 보내는 데이터의 타입.   'success'
         data : {receiverMail: $("#mbsp_email").val()},
@@ -292,6 +296,57 @@
 
       });
     });
+
+    // 인증확인 <button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증확인</button>
+    $("#btnConfirmAuth").click(() => {
+
+      if($("#authCode").val() =="") {
+        alert("인증코드를 입력해주세요.");
+        $("#authCode").focus();
+        return;
+      }
+
+      // 인증확인 요청
+      $.ajax({
+        url : "/email/confirmAuthCode",
+        type : "get",
+        dataType : "text",
+        data : {authCode : $("#authCode").val()} ,
+        success : (result) => {
+          if(result == "success") {
+            alert("인증성공");
+            isConfirmAuth = true;
+          }else if(result == "fail"){
+            alert("인증코드 불일치");
+            isConfirmAuth = false;
+          }else if(result == "request"){
+            alert("인증코드 유효시간 초과");
+            $("#authCode").val("");
+            isConfirmAuth = false;
+          }
+        }
+      });
+    });
+
+    // 회원가입 버튼
+    $("#btnJoin").click(() => {
+
+      // 회원가입 유효성검사
+
+      if(!useIDCheck){
+        alert("아이디 중복체크를 해주세요");
+        return;
+      }
+
+      if(!isConfirmAuth){
+        alert("이메일 인증확인 바랍니다");
+        return;
+      }
+
+      // 폼 전송작업
+      // joinForm.submit();
+    });
+
   });
   </script>
   </body>

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -128,5 +129,53 @@ public class MemberController {
 		session.invalidate();
 		
 		return "redirect:/";
+	}
+	
+	// 회원수정페이지로 이동전 인증 확인 폼
+	@GetMapping("/confirmPw")
+	public void confirmPw() {
+		log.info("회원수정 전 confirm 확인");
+	}
+	
+	// 회원수정페이지로 이동전 인증 확인
+	@PostMapping("/confirmPw")
+	public String confirmPw(LoginDTO dto,RedirectAttributes rttr,HttpSession session) {
+		
+		log.info("회원수정전 인증 재확인 : " + dto);
+		
+		MemberVO db_vo = memberService.login(dto.getMbsp_id());
+		
+		String url = "";
+		String msg = "";
+		
+		// 아이디가 일치하면
+		if(db_vo != null) {
+			// 사용자가 입력한 비밀번호(평문 텍스트) 와 DB에서 가져온 암호화된 비밀번호 일치여부 검사.  
+			if(passwordEncoder.matches(dto.getMbsp_password(), db_vo.getMbsp_password())) {
+				url = "/member/modify"; // 회원수정폼 주소			
+			}else {
+				// 비밀번호가 일치하지 않음
+				url = "/member/confirmPw"; //비밀번호확인 폼
+				msg = "비밀번호가 일치하지않습니다";
+				rttr.addFlashAttribute("msg", msg); // 로그인 폼 jsp파일에서 사용목적
+			}
+		}else {
+			// 아이디가 일치하지 않음
+			url = "/member/confirmPw"; // 로그인 폼주소
+			msg = "아이디가 일치하지않습니다";
+			rttr.addFlashAttribute("msg", msg); // 로그인 폼 jsp파일에서 사용목적
+		}
+		return "redirect:" + url;
+		
+	}
+	
+	//회원수정 폼 : 인증 사용자의 회원가입정보 뷰(View)에 출력
+	@GetMapping("/modify")
+	public void modify(HttpSession session, Model model) {
+		String mbsp_id = ((MemberVO)session.getAttribute("loginStatus")).getMbsp_id();
+		
+		
+		MemberVO db_vo = memberService.login(mbsp_id);
+		model.addAttribute("momberVO" + db_vo);
 	}
 }

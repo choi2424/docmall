@@ -26,7 +26,7 @@ public class AdminController {
 	private final PasswordEncoder passwordEncoder;
 	
 	// 관리자 로그인용 페이지
-	@GetMapping("")
+	@GetMapping("intro")
 	public String adminLogin() {
 		log.info("관리자 로그인 페이지");
 		
@@ -41,6 +41,7 @@ public class AdminController {
 		
 		AdminVO db_vo = adminservice.admin_ok(vo.getAdmin_id());
 		
+		
 		String url = "";
 		String msg = "";
 		
@@ -50,18 +51,20 @@ public class AdminController {
 			if(passwordEncoder.matches(vo.getAdmin_pw(), db_vo.getAdmin_pw())) {
 				// 로그인 성공결과로 서버측의 메모리를 사용하는 세션형태작업
 				session.setAttribute("adminStatus", db_vo);
-				url = "/admin/admin_menu"; // 메인페이지 주소
+				// 로그인 시간 업데이트
+				adminservice.admin_visit_date(vo.getAdmin_id());
 				
+				url = "/admin/admin_menu"; //관리자 메인페이지 주소
 			}else {
 				// 비밀번호가 일치하지 않음
-				url = "/admin/adLogin"; // 로그인 폼주소
-				msg = "비밀번호가 일치하지않습니다";
+				url = "/admin/intro"; // 로그인 폼주소
+				msg = "failPW";
 				rttr.addFlashAttribute("msg", msg); // 로그인 폼 jsp파일에서 사용목적
 			}
 		}else {
 			// 아이디가 일치하지 않음
-			url = "/admin/adLogin"; // 로그인 폼주소
-			msg = "아이디가 일치하지않습니다";
+			url = "/admin/intro"; // 로그인 폼주소
+			msg = "failID";
 			rttr.addFlashAttribute("msg", msg);
 		}
 		
@@ -72,5 +75,14 @@ public class AdminController {
 	@GetMapping("/admin_menu")
 	public void admin_menu() {
 		
+	}
+	
+	// 로그아웃
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		
+		session.invalidate();
+		
+		return "redirect:/admin/intro";
 	}
 }

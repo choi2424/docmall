@@ -67,7 +67,7 @@
       </div>
       
       <div class="box-footer">
-      <button type="button" id="btnLogin" class="btn btn-primary">로그인</button>
+      <button type="submit" id="btnLogin" class="btn btn-primary">로그인</button>
       </div>
       </form>
       </div>
@@ -77,45 +77,32 @@
 
   <%@include file="/WEB-INF/views/comm/plugin.jsp" %>
 
-<script>
-  // jquery.slim.min.js 파일에 jquery 명령어가 정의되어 있음
-  // 별칭 : $ -> jQuery()함수
-  // read() 이벤트 메서드 : 브라우저가 html태그를 모두 읽고난 후에 동작하는 이벤트 특징.
-  // 자바스크립트 이벤트 등록 :  https://www.w3schools.com/js/js_htmldom_eventlistener.asp
-  let msg = "${msg}";
-  // 아이디 비밀번호 확인
-  if(msg != "") {
-        alert(msg);
-  }
+  <script>
 
-  $(document).ready(() => {
+    let msg = "${msg}";
+    let sessionMbsp_id = "${loginStatus.getMbsp_id()}"
 
-    let loginForm = $("#confirmPwForm");// form 태그 참조 <form role="form" id="loginForm" method="post" action="">
-    
+    if(msg != "") {
+      alert(msg);
+    }
 
-
-    // 로그인 버튼
-    $("#btnLogin").click(() => {
-
-      // 아이디 입력검사
-      if($("#mbsp_id").val() =="") {
-        alert("아이디를 입력해주세요");
+    $("#btnlogin").click(() => {
+      if($("#mbsp_id").val() == "") {
+        alert("아이디를 입력해 주세요.");
         $("#mbsp_id").focus();
-        return;
-      }
-
-      // 비밀번호를 입력검사
-      if($("#mbsp_password").val() =="") {
-        alert("비밀번호를 입력해주세요");
+        return false;
+      }else if($("#mbsp_password").val() == "") {
+        alert("비밀번호를 입력해 주세요.");
         $("#mbsp_password").focus();
-        return;
+        return false;
+      }else if($("#mbsp_id").val() != sessionMbsp_id) {
+        alert("아이디를 다시 확인 해 주세요.");
+        $("#mbsp_id").focus();
+        return false;
       }
+    })
 
-      
-      // 폼 전송작업
-      loginForm.submit();
-    });
-  });
+
 
   </script>
   </body>

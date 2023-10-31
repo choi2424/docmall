@@ -101,7 +101,7 @@
       </div>
       
       <div class="box-footer">
-      <button type="button" id="btnModify" class="btn btn-primary">회원가입</button>
+      <button type="button" id="btnModify" class="btn btn-primary">회원수정</button>
       </div>
       </form>
       </div>
@@ -211,40 +211,11 @@
   // 별칭 : $ -> jQuery()함수
   // read() 이벤트 메서드 : 브라우저가 html태그를 모두 읽고난 후에 동작하는 이벤트 특징.
   // 자바스크립트 이벤트 등록 :  https://www.w3schools.com/js/js_htmldom_eventlistener.asp
-  $(document).ready(function() {
+  $(document).ready(()=> {
 
-    let useIDCheck = false; // 아이디 중복체크 사용유무 확인
-    let isConfirmAuth = false; // 이메일 중복체크 사용유무 확인
     let modifyForm = $("#modifyForm");// form 태그 참조 <form role="form" id="modifyForm" method="post" action="">
 
-    // document.getElementById("idCheck");
-    $("#idCheck").click(() => {
-      // alert("아이디 중복체크");
-      if($("#mbsp_id").val() == ""){
-        alert("아이디를 입력하세요");
-        $("#mbsp_id").focus();
-        return;
-      }
 
-      // 아이디 중복체크
-      $.ajax({
-        url : "/member/idCheck",
-        type : "get" ,
-        dataType : "text" ,
-        data : {mbsp_id : $("#mbsp_id").val()} ,
-        success : (result) => {
-          if(result == "yes"){
-            alert("아이디 사용가능");
-            useIDCheck = true;
-          }else{
-            alert("아이디 사용불가능");
-            useIDCheck = false;
-            $("#mbsp_id").val("");
-            $("#mbsp_id").focus(); 
-          }
-        }
-      });
-    });
 
     // 메일인증 요청
     $("#mailAuth").click(() => {
@@ -304,17 +275,7 @@
     // 회원가입 버튼
     $("#btnModify").click(() => {
 
-      // 회원가입 유효성검사
 
-      if(!useIDCheck){
-        alert("아이디 중복체크를 해주세요");
-        return;
-      }
-
-      if(!isConfirmAuth){
-        alert("이메일 인증확인 바랍니다");
-        return;
-      }
 
       // 폼 전송작업
       modifyForm.submit();

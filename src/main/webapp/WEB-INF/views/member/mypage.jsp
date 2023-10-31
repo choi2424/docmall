@@ -49,7 +49,7 @@
     <div class="box box-primary">
 
       <div class="box-header with-border">
-        <h3 class="box-title">회원가입</h3><br>
+        <h3 class="box-title">내정보</h3><br>
       </div>
 
       <form role="form" id="modifyForm" method="post" accept="/member/modify">

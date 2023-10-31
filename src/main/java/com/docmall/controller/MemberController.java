@@ -133,13 +133,13 @@ public class MemberController {
 	
 	// 회원수정페이지로 이동전 인증 확인 폼
 	@GetMapping("/confirmPw")
-	public void confirmPw() {
+	public void confirmPw(HttpSession session) {
 		log.info("회원수정 전 confirm 확인");
 	}
 	
 	// 회원수정페이지로 이동전 인증 확인
 	@PostMapping("/confirmPw")
-	public String confirmPw(LoginDTO dto,RedirectAttributes rttr,HttpSession session) {
+	public String confirmPw(LoginDTO dto,RedirectAttributes rttr,HttpSession session) throws Exception {
 		
 		log.info("회원수정전 인증 재확인 : " + dto);
 		
@@ -161,7 +161,7 @@ public class MemberController {
 			}
 		}else {
 			// 아이디가 일치하지 않음
-			url = "/member/confirmPw"; // 로그인 폼주소
+			url = "/member/login"; // 로그인 폼주소
 			msg = "아이디가 일치하지않습니다";
 			rttr.addFlashAttribute("msg", msg); // 로그인 폼 jsp파일에서 사용목적
 		}
@@ -172,11 +172,12 @@ public class MemberController {
 	//회원수정 폼 : 인증 사용자의 회원가입정보 뷰(View)에 출력
 	@GetMapping("/modify")
 	public void modify(HttpSession session, Model model) throws Exception {
+		
 		String mbsp_id = ((MemberVO)session.getAttribute("loginStatus")).getMbsp_id();
 		
 		
 		MemberVO db_vo = memberService.login(mbsp_id);
-		model.addAttribute("momberVO" + db_vo);
+		model.addAttribute("memberVO",db_vo);
 	}
 	
 	@PostMapping("/modify")

@@ -171,11 +171,90 @@ public class MemberController {
 	
 	//회원수정 폼 : 인증 사용자의 회원가입정보 뷰(View)에 출력
 	@GetMapping("/modify")
-	public void modify(HttpSession session, Model model) {
+	public void modify(HttpSession session, Model model) throws Exception {
 		String mbsp_id = ((MemberVO)session.getAttribute("loginStatus")).getMbsp_id();
 		
 		
 		MemberVO db_vo = memberService.login(mbsp_id);
 		model.addAttribute("momberVO" + db_vo);
 	}
+	
+	@PostMapping("/modify")
+	public String modify(MemberVO vo, HttpSession session, RedirectAttributes rttr) throws Exception {
+		log.info("정보수정 : " + vo);
+		
+		// 로그인 시 인증목적으로 세션작업을 한 정보에서 아이디를 받아온다.
+		MemberVO db_vo = (MemberVO) session.getAttribute("loginStatus");
+		
+		String mbsp_id = db_vo.getMbsp_id();
+		
+		vo.setMbsp_id(mbsp_id);
+		
+		memberService.modify(vo);
+		
+		// header.jsp 에서 전자우편이 수정된 내용으로 반영이 안되기 때문.
+		db_vo.setMbsp_email(vo.getMbsp_email()); // 수정한 데이터를 바로 세션에 업로드.
+		session.setAttribute("loginStatus", db_vo);
+		
+		rttr.addFlashAttribute("msg", "success");
+		
+		return "redirect:/";
+	}
+	
+	// 마이 페이지
+		@GetMapping("/mypage")
+		public void mypage(HttpSession session, Model medel) throws Exception {
+			
+			String mbsp_id = ((MemberVO) session.getAttribute("loginStatus")).getMbsp_id();
+			
+			
+			MemberVO db_vo = memberService.login(mbsp_id);
+			medel.addAttribute("memberVO", db_vo);
+		}
+		
+		// 회원탈퇴 폼
+		@GetMapping("/delConfirmPw")
+		public void delConfirmPw() {
+			
+		}
+		
+		// 회원탈퇴
+		@PostMapping("/delete")
+		public String delete (LoginDTO dto, HttpSession session, RedirectAttributes rttr) throws Exception {
+			
+			log.info("로그인 : " + dto);
+			
+			MemberVO db_vo = memberService.login(dto.getMbsp_id());
+			
+			String url = "";
+			String msg = "";
+			
+			// 아이디가 존재하면 true, 존재하지 않으면 false
+			if(db_vo != null) {
+				// 사용자가 입력한 비밀번호(평문 텍스트)와 DB테이블의 암호화된 비밀번호 일치여부 검사. 
+				if(passwordEncoder.matches(dto.getMbsp_password(), db_vo.getMbsp_password())) {
+					url = "/"; // 메인 페이지 주소
+					session.invalidate(); // 세션 소멸
+					
+					// 회원탈퇴 작업.
+					memberService.delete(dto.getMbsp_id());
+					
+				}else {
+					url = "/member/delConfirmPw"; // 회원탈퇴 폼 주소
+					msg = "비밀번호가 일치하지 않습니다.";
+					rttr.addFlashAttribute("msg", msg); // 회원탈퇴 폼 jsp파일에서 사용할 목적
+					
+					log.info("a");
+				}
+			}else {
+				// 아이디가 일치하지 않을 때.
+				url = "/member/delConfirmPw"; // 회원탈퇴 폼 주소
+				msg = "아이디가 일치하지 않습니다.";
+				rttr.addFlashAttribute("msg", msg); // 회원탈퇴 폼 jsp파일에서 사용할 목적
+				
+				log.info("b");
+			}
+			
+			return "redirect:" + url;
+		}
 }

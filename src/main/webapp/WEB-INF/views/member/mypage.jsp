@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!doctype html>
 <html lang="en">
@@ -11,10 +12,9 @@
     <meta name="generator" content="Hugo 0.101.0">
     <title>Pricing example · Bootstrap v4.6</title>
 
+
     <!-- Bootstrap core CSS -->
-    <%@include file="/WEB-INF/views/comm/plugin2.jsp" %>
-
-
+	<%@ include file="/WEB-INF/views/comm/plugin2.jsp" %>
 
     <!-- Favicons -->
 
@@ -37,78 +37,89 @@
     </style>
 
     
-
   </head>
   <body>
     
-<%@include file="/WEB-INF/views/comm/header.jsp" %>
+	<%@include file="/WEB-INF/views/comm/header.jsp" %>
 
 <div class="container">
+
   <div class="text-center">
+
     <div class="box box-primary">
+
       <div class="box-header with-border">
-      <h3 class="box-title">회원수정</h3>
+        <h3 class="box-title">회원가입</h3><br>
       </div>
-      
-      <form role="form" id="modifyForm" method="post" action="/member/modify">
-      <div class="box-body">
-        <div class="form-group row">
-          <label for="mbsp_id" class="col-2">아이디</label>
-          <div class="col-10">
-            <input type="text" class="form-control" name="mbsp_id" id="mbsp_id" value="${memberVO.mbsp_id }" readonly>
+
+      <form role="form" id="modifyForm" method="post" accept="/member/modify">
+        <div class="box-body">
+          <div class="form-group row">
+            <label for="mbsp_id" class="col-2">아이디</label>
+            <div class="col-10">
+              <input type="text" class="form-control" name="mbsp_id" id="mbsp_id" value="${memberVO.mbsp_id }" readonly>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="mbsp_name" class="col-2">이름</label>
+            <div class="col-10">
+              <input type="text" class="form-control" name="mbsp_name" id="mbsp_name" value="${memberVO.mbsp_name }" readonly>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="mbsp_email" class="col-2">이메일</label>
+            <div class="col-10">
+              <input type="email" class="form-control" name="mbsp_email" id="mbsp_email" value="${memberVO.mbsp_email }" placeholder="e-mail@address">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="sample2_postcode" class="col-2">우편번호</label>
+            <div class="col-8">
+              <input type="text" class="form-control" name="mbsp_zipcode" id="sample2_postcode" value="${memberVO.mbsp_zipcode }" placeholder="우편번호">
+            </div>
+            <div class="col-2" ><button type="button" onclick="sample2_execDaumPostcode()" class="btn btn-outline-info">주소 검색</button></div>
+          </div>
+
+          <div class="form-group row">
+            <label for="sample2_address" class="col-2">주소</label>
+            <div class="col-10">
+              <input type="text" class="form-control" name="mbsp_addr" id="sample2_address" value="${memberVO.mbsp_addr }" placeholder="주소">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="sample2_detailAddress" class="col-2">상세주소</label>
+            <div class="col-10">
+              <input type="text" class="form-control" name="mbsp_deaddr" id="sample2_detailAddress" value="${memberVO.mbsp_deaddr }" placeholder="상세주소">
+              <input type="hidden" id="sample2_extraAddress" placeholder="참고항목">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="mbsp_phone" class="col-2">전화번호</label>
+            <div class="col-10">
+              <input type="text" class="form-control" name="mbsp_phone" id="mbsp_phone" value="${memberVO.mbsp_phone }" placeholder="000-0000-0000">
+            </div>
           </div>
         </div>
-        <div class="form-group row">
-          <label for="mbsp_name" class="col-2">이름</label>
-          <div class="col-10">
-            <input type="text" class="form-control" name="mbsp_name" id="mbsp_name" value="${memberVO.mbsp_name }" readonly>
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="mbsp_email" class="col-2">이메일</label>
-          <div class="col-10">
-            <input type="email" class="form-control" name="mbsp_email" id="mbsp_email" value="${memberVO.mbsp_email }">
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="sample2_postcode" class="col-2">우편번호</label>
-          <div class="col-8">
-            <input type="text" class="form-control" name="mbsp_zipcode" id="sample2_postcode" value="${memberVO.mbsp_zipcode }" placeholder="우편번호 입력">
-          </div>
-          <div class="col-2">
-            <button type="button" onclick="sample2_execDaumPostcode()" class="btn btn-outline-info">우편번호 찾기</button>
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="sample2_address" class="col-2">기본주소</label>
-          <div class="col-10">
-            <input type="text" class="form-control" name="mbsp_addr" id="sample2_address" value="${memberVO.mbsp_addr }" placeholder="주소입력">
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="sample2_detailAddress" class="col-2">상세주소</label>
-          <div class="col-10">
-            <input type="text" class="form-control" name="mbsp_deaddr" id="sample2_detailAddress" value="${memberVO.mbsp_deaddr }" placeholder="상세주소">
-            <input type="hidden" id="sample2_extraAddress" placeholder="참고항목">
-          </div>
-        </div>      
-        <div class="form-group row">
-          <label for="mbsp_phone" class="col-2">전화번호</label>
-          <div class="col-10">
-            <input type="text" class="form-control" name="mbsp_phone" id="mbsp_phone" value="${memberVO.mbsp_phone }" placeholder="전화번호">
-          </div>
-        </div>      
-      </div>
-      
+
       <div class="box-footer">
-      <button type="button" id="btnModify" class="btn btn-primary">회원가입</button>
+        <button type="submit" class="btn btn-primary" id="btnmodify">확인</button><br>
+        <button type="button" class="btn btn-danger" id="btnDelete">회원탈퇴</button>
       </div>
-      </form>
-      </div>
+    </form>
+
+    </div>
+
   </div>
-  
- <%@include file="/WEB-INF/views/comm/footer.jsp" %> 
+
+	<%@include file="/WEB-INF/views/comm/footer.jsp" %>
+
 </div>
+
 
 <!-- iOS에서는 position:fixed 버그가 있음, 적용하는 사이트에 맞게 position:absolute 등을 이용하여 top,left값 조정 필요 -->
 <div id="layer" style="display:none;position:fixed;overflow:hidden;z-index:1;-webkit-overflow-scrolling:touch;">
@@ -206,122 +217,25 @@
 
   <%@include file="/WEB-INF/views/comm/plugin.jsp" %>
 
-<script>
-  // jquery.slim.min.js 파일에 jquery 명령어가 정의되어 있음
-  // 별칭 : $ -> jQuery()함수
-  // read() 이벤트 메서드 : 브라우저가 html태그를 모두 읽고난 후에 동작하는 이벤트 특징.
-  // 자바스크립트 이벤트 등록 :  https://www.w3schools.com/js/js_htmldom_eventlistener.asp
-  $(document).ready(function() {
+  <script>
+    // jquery.slim.min.js 파일에 jquery명령어가 정의되어 있음.
+    // 별칭: $ -> JQuery() 함수
+    // ready() 이벤트 메소드 : 브라우저가 html태그를 모두 읽고 난 후에 동작하는 이벤트 특징.
+    // 자바 스크립트 이벤트 등록 : https://www.w3schools.com/js/js_htmldom_eventlistener.asp
+    $(document).ready(function() {
+      // document.getElementById("idCheck");
 
-    let useIDCheck = false; // 아이디 중복체크 사용유무 확인
-    let isConfirmAuth = false; // 이메일 중복체크 사용유무 확인
-    let modifyForm = $("#modifyForm");// form 태그 참조 <form role="form" id="modifyForm" method="post" action="">
-
-    // document.getElementById("idCheck");
-    $("#idCheck").click(() => {
-      // alert("아이디 중복체크");
-      if($("#mbsp_id").val() == ""){
-        alert("아이디를 입력하세요");
-        $("#mbsp_id").focus();
-        return;
-      }
-
-      // 아이디 중복체크
-      $.ajax({
-        url : "/member/idCheck",
-        type : "get" ,
-        dataType : "text" ,
-        data : {mbsp_id : $("#mbsp_id").val()} ,
-        success : (result) => {
-          if(result == "yes"){
-            alert("아이디 사용가능");
-            useIDCheck = true;
-          }else{
-            alert("아이디 사용불가능");
-            useIDCheck = false;
-            $("#mbsp_id").val("");
-            $("#mbsp_id").focus(); 
-          }
-        }
+      $("#btnDelete").click(function() {
+        location.href = "/member/delConfirmPw";
       });
+        
+
+
     });
 
-    // 메일인증 요청
-    $("#mailAuth").click(() => {
-
-      if($("#mbsp_email").val() == ""){
-        alert("이메일을 입력하세요.");
-        $("#mbsp_email").focus();
-        return;
-      }
-
-
-      $.ajax({
-        url : "/email/authCode",
-        type : "get" ,
-        dataType : "text", // 스프링에서 보내는 데이터의 타입.   'success'
-        data : {receiverMail: $("#mbsp_email").val()},
-        success : (result) => {
-          if(result == 'success') {
-            alert("인증메일이 발송되었습니다. 메일 확인바랍니다.");
-          }
-        }
-
-      });
-    });
-
-    // 인증확인 <button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증확인</button>
-    $("#btnConfirmAuth").click(() => {
-
-      if($("#authCode").val() =="") {
-        alert("인증코드를 입력해주세요.");
-        $("#authCode").focus();
-        return;
-      }
-
-      // 인증확인 요청
-      $.ajax({
-        url : "/email/confirmAuthCode",
-        type : "get",
-        dataType : "text",
-        data : {authCode : $("#authCode").val()} ,
-        success : (result) => {
-          if(result == "success") {
-            alert("인증성공");
-            isConfirmAuth = true;
-          }else if(result == "fail"){
-            alert("인증코드 불일치");
-            isConfirmAuth = false;
-          }else if(result == "request"){
-            alert("인증코드 유효시간 초과");
-            $("#authCode").val("");
-            isConfirmAuth = false;
-          }
-        }
-      });
-    });
-
-    // 회원가입 버튼
-    $("#btnModify").click(() => {
-
-      // 회원가입 유효성검사
-
-      if(!useIDCheck){
-        alert("아이디 중복체크를 해주세요");
-        return;
-      }
-
-      if(!isConfirmAuth){
-        alert("이메일 인증확인 바랍니다");
-        return;
-      }
-
-      // 폼 전송작업
-      modifyForm.submit();
-    });
-
-  });
   </script>
-  </body>
+
+</body>
+
 </html>
     

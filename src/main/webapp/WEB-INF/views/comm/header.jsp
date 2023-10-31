@@ -15,7 +15,7 @@
     <!-- 로그인 이후 표시 -->
     <c:if test="${sessionScope.loginStatus != null }">
     	<a class="p-2 text-dark" href="/member/logout">Logout</a>
-    	<a class="p-2 text-dark" href="/member/modify">Modify</a>
+    	<a class="p-2 text-dark" href="/member/confirmPw">Modify</a>
     </c:if>
         
     <a class="p-2 text-dark" href="#">MyPage</a>

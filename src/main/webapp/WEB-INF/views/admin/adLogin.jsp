@@ -26,11 +26,11 @@
 					<fieldset class="clearfix">
 					<p>
 						<span class="fa fa-user"></span>
-						<input type="text"  name="admin_id" value="admin" Placeholder="Username" required>
+						<input type="text"  name="admin_id" Placeholder="Username" required>
 					</p> <!-- JS because of IE support; better: placeholder="Username" -->
 					<p>
 						<span class="fa fa-lock"></span>
-						<input type="password" name="admin_pw" value="1234" Placeholder="Password" required>
+						<input type="password" name="admin_pw" Placeholder="Password" required>
 					</p> <!-- JS because of IE support; better: placeholder="Password" -->
 					<div>
 						<span style="width:48%; text-align:left;  display: inline-block;">

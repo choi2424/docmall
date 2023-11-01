@@ -5,7 +5,7 @@
 <header class="main-header">
 
     <!-- Logo -->
-    <a href="admin_menu" class="logo">
+    <a href="/admin/admin_menu" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>A</b>LT</span>
       <!-- logo for regular state and mobile devices -->
@@ -21,6 +21,11 @@
       <!-- Navbar Right Menu -->
       
       <div class="navbar-custom-menu">
+		<ul class="nav navbar-nav">
+          <li class="dropdown messages-menu">
+            <a href="/">홈</a>
+          </li>
+        </ul>
         <ul class="nav navbar-nav">
           <li class="dropdown messages-menu">
             <a href="#">최근접속시간 : [<fmt:formatDate value='${adminStatus.admin_visit_date}' pattern='yyyy/MM/dd hh:mm:ss' />]</a>

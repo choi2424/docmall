@@ -1,5 +1,8 @@
 package com.docmall.mapper;
 
-public interface AdProductMapper {
+import com.docmall.domain.ProductVO;
 
+public interface AdProductMapper {
+	
+	void pro_insert(ProductVO vo);
 }

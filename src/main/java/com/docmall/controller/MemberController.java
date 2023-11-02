@@ -202,15 +202,23 @@ public class MemberController {
 		return "redirect:/";
 	}
 	
-	// 마이 페이지
+		// 마이 페이지
 		@GetMapping("/mypage")
-		public void mypage(HttpSession session, Model medel) throws Exception {
+		public String mypage(HttpSession session, Model medel,RedirectAttributes rttr) throws Exception {
 			
 			String mbsp_id = ((MemberVO) session.getAttribute("loginStatus")).getMbsp_id();
+			String url = "";
 			
+			if(mbsp_id == null) {
+				url = "/member/login";
+			}else {
+				url = "/member/mypage";
+			}
 			
 			MemberVO db_vo = memberService.login(mbsp_id);
 			medel.addAttribute("memberVO", db_vo);
+			
+			return "redirect:" + url;
 		}
 		
 		// 회원탈퇴 폼

@@ -25,5 +25,5 @@ public class ProductVO {
 	private Date pro_date; // 상품등록날짜
 	private Date pro_updatedate; // 상품 수정날짜
 	
-//	private MultipartFile uploadFile; // 업로드 파일
+//	private MultipartFile uploadFile; // 업로드 파일 
 }

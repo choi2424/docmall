@@ -33,8 +33,6 @@
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">HEADER</li>
         <!-- Optionally, you can add icons to the links -->
-        <li class="active"><a href="#"><i class="fa fa-link"></i> <span>Link</span></a></li>
-        <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
         <li class="treeview">
           <a href="#"><i class="fa fa-link"></i> <span>상품관리</span>
             <span class="pull-right-container">
@@ -43,7 +41,7 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="/admin/product/pro_insert">상품등록</a></li>
-            <li><a href="#">상품목록</a></li>
+            <li><a href="/admin/product/pro_list">상품목록</a></li>
           </ul>
         </li>
         <li class="treeview">

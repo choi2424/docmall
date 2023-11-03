@@ -48,7 +48,7 @@ desired effect
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>상품 등록</h1>
+      <h1>상품 목록</h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
         <li class="active">Here</li>
@@ -58,91 +58,113 @@ desired effect
     <!-- Main content -->
     <section class="content container-fluid">
       <div class="row">
+        <!-- row는 하위 div를 12개를 사용 할 수 있다. -->
+        <!-- <div class="col-해상도-숫자(하위 div에서 사용하는 사이즈. 총합이 12가 되어야 한다.)"></div> -->
         <div class="col-md-12">
-          <div class="box box-primary">
-            <div class="box-header with-border">
-              <h3 class="box-title mt-5">Product</h3>
-            </div>
-            <form role="form" method="post" action="/admin/product/pro_insert" enctype="multipart/form-data">
+
+          <div class="box">
+              <div class="box-header with-border">
+                <h3 class="box-title">Product List</h3>
+              </div>
+
               <div class="box-body">
-                <div class="form-group row">
-                  <label class="col-sm-2 col-form-label">1차 카테고리</label> 
-                  <div class="col-sm-4">
-                    <select class="form-control" id="firstCategory">
-                      <option>1차 카테고리 선택</option>
-                      <c:forEach items="${firstCategoryList }" var="categoryVO">
-                        <option value="${categoryVO.cg_code }">${categoryVO.cg_name }</option>
-                      </c:forEach>
-                    </select>
-                  </div>
-                  <label class="col-sm-2 col-form-label">2차 카테고리</label> 
-                  <div class="col-sm-4">
-                    <select class="form-control" id="secondCategory" name="cg_code">
-                      <option>2차 카테고리 선택</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="pro_name" class="col-sm-2 col-form-label">상품명</label> 
-                  <div class="col-sm-4">
-                    <input type="text" class="form-control" name="pro_name" id="pro_name" placeholder="상품명">
-                  </div>
-                  <label for="pro_price" class="col-sm-2 col-form-label">상품가격</label> 
-                  <div class="col-sm-4">
-                    <input type="text" class="form-control" name="pro_price" id="pro_price" placeholder="상품가격">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="pro_discount" class="col-sm-2 col-form-label">할인율</label> 
-                  <div class="col-sm-4">
-                    <input type="text" class="form-control" name="pro_discount" id="pro_discount" placeholder="할인율">
-                  </div>
-                  <label for="pro_publisher" class="col-sm-2 col-form-label">제조사</label> 
-                  <div class="col-sm-4">
-                    <input type="text" class="form-control" name="pro_publisher" id="pro_publisher" placeholder="제조사">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label class="col-sm-2 col-form-label">상품이미지</label> 
-                  <div class="col-sm-4">
-                    <input type="file" class="form-control" name="uploadFile" id="uploadFile">
-                  </div>
-                  <label class="col-sm-2 col-form-label">미리보기 이미지</label> 
-                  <div class="col-sm-4">
-                    <img id="img_preview" style="width: 200px; height:200px;" />
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="pro_content" class="col-sm-2 col-form-label">상품설명</label> 
-                  <div class="col-sm-10">
-                    <textarea class="form-control" id="pro_content" name="pro_content" rows="3"></textarea>
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="pro_amount" class="col-sm-2 col-form-label">수량</label> 
-                  <div class="col-sm-4">
-                    <input type="text" class="form-control" name="pro_amount" id="pro_amount" placeholder="작성자 입력...">
-                  </div>
-                  <label for="pro_buy" class="col-sm-2 col-form-label">판매여부</label> 
-                  <div class="col-sm-4">
-                    <select class="form-control" id="pro_buy" name="pro_buy">
-                      <option value="가능">판매가능</option>
-                      <option value="불가능">판매불가능</option>
-                    </select>
-                  </div>
-                </div>
+                <table class="table table-bordered">
+                  <tbody>
+                    <tr>
+                      <th style="width: 2%"><input type="checkbox" id="checkAll" /></th>
+                      <th style="width: 8%">상품코드</th>
+                      <th style="width: 25%">상품명</th>
+                      <th style="width: 10%">가격</th>
+                      <th style="width: 20%">등록일</th>
+                      <th style="width: 15%">판매여부</th>
+                      <th style="width: 10%">수정</th>
+                      <th style="width: 10%">삭제</th>
+                    </tr>
+                    <c:forEach items="${pro_list }" var="productVO">
+                      <tr>
+                        <td><input type="checkbox" /></td>
+                        <td>${productVO.pro_num }</td>
+                        <td>
+                          <a class="move" href="#" data-bno="${productVO.pro_num}"><img src="">${productVO.pro_up_folder}${productVO.pro_img}</a>
+                          <a class="move" href="#" data-bno="${productVO.pro_num}">${ productVO.pro_name }</a>
+                        </td>
+                        <td>${productVO.pro_price }</td>
+                        <td><fmt:formatDate value="${ productVO.pro_date }" pattern="yyyy/MM/dd" /></td>
+                        <td>${productVO.pro_buy }</td>
+                        <td><button type="button" class="btn btn-primary">수정</button></td>
+                        <td><button type="button" class="btn btn-danger">삭제</button></td>
+                      </tr>
+                    </c:forEach>
+
+                  </tbody>
+                </table>
               </div>
-              <div class="box-footer">
-                <div class="form-group">
-                  <ul class="uploadedlist"></ul>
+
+
+            <div class="box-footer clearfix">
+                <div class="row">
+                  <div class="col-6">
+                      <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <!-- 이전 표시여부 -->
+                            <c:if test="${pageMaker.prev }">
+                              <li class="page-item">
+                                  <a class="page-link" href="/board/list?pageNum=${pageMaker.startPage -1 }">Previous</a>
+                              </li>
+                            </c:if>
+                            <!-- 페이지 번호 출력 -->
+                            <!-- 1	2	3	4	5	5	7	8	9	10	[다음] -->
+                            <!-- [이전]	11	12	13	15	15	16	17	18	19	20	[다음] -->
+                        <c:forEach begin="${pageMaker.startPage }" end="${pageMaker.endPage }" var="num">
+                            <li class='page-item ${pageMaker.cri.pageNum == num ? "active":"" }' aria-current="page">
+                              <a class="page-link movepage" href="#" data-page="${num }">${num }</a>
+                            </li>
+                        </c:forEach>
+                            
+                            <!-- 다음 표시여부 -->
+                            <c:if test="${pageMaker.next }">                                       
+                              <li class="page-item">
+                                  <a class="page-link" href="/board/list?pageNum=${pageMaker.endPage +1 }">Next</a>
+                              </li>
+                            </c:if>
+
+                        </ul>
+                      </nav>
+                  </div>
+
+                  <!-- 검색기능 -->
+                  <div class="col-6">
+                      <form action="/product/pro_list" method="get">
+                        <select name="type">
+                            <option selected>검색종류선택</option>
+                            <option value="N" ${pageMaker.cri.type == 'N'?'selected':''}>상품이름</option>
+                            <option value="C" ${pageMaker.cri.type == 'C'?'selected':''}>상품코드</option>
+                            <option value="P" ${pageMaker.cri.type == 'P'?'selected':''}>판매자</option>
+                            <option value="NC" ${pageMaker.cri.type == 'TC'?'selected':''}>상품이름 or 상품코드</option>
+                            <option value="NW" ${pageMaker.cri.type == 'TW'?'selected':''}>상품이름 or 판매자</option>
+                            <option value="NCP" ${pageMaker.cri.type == 'TWC'?'selected':''}>상품이름 or 판매자 or 상품코드</option>
+                        </select>
+                        <input type="text" name="keyword" value="${pageMaker.cri.keyword}" />
+                        <input type="hidden" name="pageNum" value="1" />
+                        <input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+                        <button type="submit" class="btn btn-primary">검색</button>
+                      </form>
+                      <!--1)페이지번호 [이전] 1  2  3  4  5  6  [다음] 페이지 이동목적으로 클릭할 때 사용  -->
+                      <!--2)목록에서 제목 클릭할 때 사용  action="/board/get"-->
+                      <form id="actionForm" action="/board/list" method="get">
+                        <input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
+                        <input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
+                        <input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
+                        <input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
+                        <input type="hidden" name="bno" id="bno" />
+                      </form>
+                  </div>
                 </div>
-                <div class="text-center">
-                  <button type="submit" class="btn btn-primary">상품등록</button>
-                  <button type="button" id="btnCancel" class="btn btn-primary">취소</button>
-                </div>
-              </div>
-            </form>
+                <a class="btn btn-primary" href="/admin/product/pro_insert" role="button">상품등록</a>
+
+            </div>
           </div>
+
         </div>
       </div>
     </section>

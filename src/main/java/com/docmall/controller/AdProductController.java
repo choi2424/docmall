@@ -10,11 +10,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -70,7 +72,7 @@ public class AdProductController {
 		// 2)상품정보 저장
 		adProductService.pro_insert(vo);
 		
-		return "redirect:/admin/pro_list";
+		return "redirect:/admin/product/pro_list";
 	}
 	
 	// CKEDITOR 업로드 탭에서 파일 업로드시 동작하는 매핑주소
@@ -143,6 +145,7 @@ public class AdProductController {
 	//상품리스트
 	@GetMapping("/pro_list")
 	public void pro_list(Criteria cri,Model model) throws Exception {
+		cri.setAmount(5);
 		
 		List<ProductVO> pro_list = adProductService.pro_list(cri);
 		
@@ -157,6 +160,15 @@ public class AdProductController {
 		model.addAttribute("pageMaker",new PageDTO(cri, totelCount));
 		
 	}
+	
+	// 상품 리스트에서 보여줄 이미지 <img sec="매핑주소">
+	@ResponseBody
+	@GetMapping("/imageDisplay") // /admin/product/imageDisplay
+	public ResponseEntity<byte[]> imgDisplay(String dateFolderName, String fileName) throws Exception {
+			
+		return FileUtils.getFile(uploadPath + dateFolderName, fileName);
+	}
+		
 			
 	
 }

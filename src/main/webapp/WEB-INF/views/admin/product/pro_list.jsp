@@ -10,9 +10,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 2 | Starter</title>
+  <title>DocMall  | Admin</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
   <%@include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
   
 </head>
@@ -63,105 +64,115 @@ desired effect
         <div class="col-md-12">
 
           <div class="box">
-              <div class="box-header with-border">
-                <h3 class="box-title">Product List</h3>
-              </div>
+            <div class="box-header with-border">
+              <h3 class="box-title">Product List</h3>
+            </div>
 
-              <div class="box-body">
-                <table class="table table-bordered">
-                  <tbody>
+            <div class="box-body">
+              <div>
+                <div>
+                  <form id="actionForm" action="" method="get">
+                    <input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
+                    <input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
+                    <input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
+                    <input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
+                    <input type="hidden" name="pro_num" id="pro_num" />
+                  </form>
+                </div>
+                <!-- 검색기능 -->
+                <div class="col-md-6">
+                  <form action="/admin/product/pro_list" method="get">
+                    <select name="type">
+                      <option selected>검색종류선택</option>
+                      <option value="N" ${pageMaker.cri.type == 'N'?'selected':''}>상품명</option>
+                      <option value="C" ${pageMaker.cri.type == 'C'?'selected':''}>상품코드</option>
+                      <option value="P" ${pageMaker.cri.type == 'P'?'selected':''}>판매자</option>
+                      <option value="NP" ${pageMaker.cri.type == 'NP'?'selected':''}>상품명 or 제조사</option>
+                    </select>
+                    <input type="text" name="keyword" value="${pageMaker.cri.keyword}" />
+                    <input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
+                    <input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+                    <button type="submit" class="btn btn-primary">검색</button>
+                  </form>
+                  <!--1)페이지번호 [이전] 1  2  3  4  5  6  [다음] 페이지 이동목적으로 클릭할 때 사용  -->
+                  <!--2)목록에서 제목 클릭할 때 사용  action="/board/get"-->
+
+                </div>
+              </div>
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <th style="width: 2%"><input type="checkbox" id="checkAll" /></th>
+                    <th style="width: 8%">상품코드</th>
+                    <th style="width: 25%">상품명</th>
+                    <th style="width: 10%">가격</th>
+                    <th style="width: 20%">등록일</th>
+                    <th style="width: 15%">판매여부</th>
+                    <th style="width: 10%">수정</th>
+                    <th style="width: 10%">삭제</th>
+                  </tr>
+                  <c:forEach items="${pro_list }" var="productVO">
                     <tr>
-                      <th style="width: 2%"><input type="checkbox" id="checkAll" /></th>
-                      <th style="width: 8%">상품코드</th>
-                      <th style="width: 25%">상품명</th>
-                      <th style="width: 10%">가격</th>
-                      <th style="width: 20%">등록일</th>
-                      <th style="width: 15%">판매여부</th>
-                      <th style="width: 10%">수정</th>
-                      <th style="width: 10%">삭제</th>
+                      <td><input type="checkbox" name="check" value="${productVO.pro_num}"/></td>
+                      <td>${productVO.pro_num }</td>
+                      <td>
+                        <a class="move" href="#" data-bno="${productVO.pro_num}"><img src="/admin/product/imageDisplay?dateFolderName=${productVO.pro_up_folder }&fileName=s_${productVO.pro_img }"></a>
+                        <a class="move" href="#" data-bno="${productVO.pro_num}">${ productVO.pro_name }</a>
+                      </td>
+                      <td><input type="text" name="pro_price" value="${productVO.pro_price }" /></td>
+                      <td><fmt:formatDate value="${ productVO.pro_date }" pattern="yyyy/MM/dd" /></td>
+                      <td>
+                        <select name="pro_buy">
+                          <option value="Y" ${productVO.pro_buy } == 'Y'? 'select' : ''>판매가능</option>
+                          <option value="N" ${productVO.pro_buy } == 'N'? 'select' : ''>판매불가능</option>
+                        </select>
+                      </td>
+                      <td><button type="button" class="btn btn-primary">수정</button></td>
+                      <td><button type="button" class="btn btn-danger">삭제</button></td>
                     </tr>
-                    <c:forEach items="${pro_list }" var="productVO">
-                      <tr>
-                        <td><input type="checkbox" /></td>
-                        <td>${productVO.pro_num }</td>
-                        <td>
-                          <a class="move" href="#" data-bno="${productVO.pro_num}"><img src="">${productVO.pro_up_folder}${productVO.pro_img}</a>
-                          <a class="move" href="#" data-bno="${productVO.pro_num}">${ productVO.pro_name }</a>
-                        </td>
-                        <td>${productVO.pro_price }</td>
-                        <td><fmt:formatDate value="${ productVO.pro_date }" pattern="yyyy/MM/dd" /></td>
-                        <td>${productVO.pro_buy }</td>
-                        <td><button type="button" class="btn btn-primary">수정</button></td>
-                        <td><button type="button" class="btn btn-danger">삭제</button></td>
-                      </tr>
-                    </c:forEach>
-
-                  </tbody>
-                </table>
-              </div>
-
+                  </c:forEach>
+                </tbody>
+              </table>
+            </div>
 
             <div class="box-footer clearfix">
-                <div class="row">
-                  <div class="col-6">
-                      <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                            <!-- 이전 표시여부 -->
-                            <c:if test="${pageMaker.prev }">
-                              <li class="page-item">
-                                  <a class="page-link" href="/board/list?pageNum=${pageMaker.startPage -1 }">Previous</a>
-                              </li>
-                            </c:if>
-                            <!-- 페이지 번호 출력 -->
-                            <!-- 1	2	3	4	5	5	7	8	9	10	[다음] -->
-                            <!-- [이전]	11	12	13	15	15	16	17	18	19	20	[다음] -->
-                        <c:forEach begin="${pageMaker.startPage }" end="${pageMaker.endPage }" var="num">
-                            <li class='page-item ${pageMaker.cri.pageNum == num ? "active":"" }' aria-current="page">
-                              <a class="page-link movepage" href="#" data-page="${num }">${num }</a>
-                            </li>
-                        </c:forEach>
-                            
-                            <!-- 다음 표시여부 -->
-                            <c:if test="${pageMaker.next }">                                       
-                              <li class="page-item">
-                                  <a class="page-link" href="/board/list?pageNum=${pageMaker.endPage +1 }">Next</a>
-                              </li>
-                            </c:if>
-
-                        </ul>
-                      </nav>
-                  </div>
-
-                  <!-- 검색기능 -->
-                  <div class="col-6">
-                      <form action="/product/pro_list" method="get">
-                        <select name="type">
-                            <option selected>검색종류선택</option>
-                            <option value="N" ${pageMaker.cri.type == 'N'?'selected':''}>상품이름</option>
-                            <option value="C" ${pageMaker.cri.type == 'C'?'selected':''}>상품코드</option>
-                            <option value="P" ${pageMaker.cri.type == 'P'?'selected':''}>판매자</option>
-                            <option value="NC" ${pageMaker.cri.type == 'TC'?'selected':''}>상품이름 or 상품코드</option>
-                            <option value="NW" ${pageMaker.cri.type == 'TW'?'selected':''}>상품이름 or 판매자</option>
-                            <option value="NCP" ${pageMaker.cri.type == 'TWC'?'selected':''}>상품이름 or 판매자 or 상품코드</option>
-                        </select>
-                        <input type="text" name="keyword" value="${pageMaker.cri.keyword}" />
-                        <input type="hidden" name="pageNum" value="1" />
-                        <input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
-                        <button type="submit" class="btn btn-primary">검색</button>
-                      </form>
-                      <!--1)페이지번호 [이전] 1  2  3  4  5  6  [다음] 페이지 이동목적으로 클릭할 때 사용  -->
-                      <!--2)목록에서 제목 클릭할 때 사용  action="/board/get"-->
-                      <form id="actionForm" action="/board/list" method="get">
-                        <input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
-                        <input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
-                        <input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
-                        <input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
-                        <input type="hidden" name="bno" id="bno" />
-                      </form>
-                  </div>
+              <div class="row">
+                <div class="col-md-2">
+                  <button type="button" class="btn btn-primary" id="btn_check_modify" role="button">체크상품수정</button>
                 </div>
-                <a class="btn btn-primary" href="/admin/product/pro_insert" role="button">상품등록</a>
+                <div class="col-md-8 text-center">
+                  <nav aria-label="...">
+                    <ul class="pagination">
+                      <!-- 이전 표시여부 -->
+                      <c:if test="${pageMaker.prev }">
+                        <li class="page-item">
+                          <a class="page-link movepage" href="${pageMaker.startPage - 1 }">Previous</a>
+                        </li>
+                      </c:if>
+                      <!-- 페이지 번호 출력 -->
+                      <!-- 1	2	3	4	5	5	7	8	9	10	[다음] -->
+                      <!-- [이전]	11	12	13	15	15	16	17	18	19	20	[다음] -->
+                      <c:forEach begin="${pageMaker.startPage }" end="${pageMaker.endPage }" var="num">
+                        <li class='page-item ${pageMaker.cri.pageNum == num ? "active":"" }' aria-current="page">
+                          <a class="page-link movepage" href="${num }" data-page="${num }">${num }</a>
+                        </li>
+                      </c:forEach>
+                            
+                      <!-- 다음 표시여부 -->
+                      <c:if test="${pageMaker.next }">                                       
+                        <li class="page-item">
+                          <a class="page-link movepage" href="{pageMaker.endPage +1 }">Next</a>
+                        </li>
+                      </c:if>
 
+                    </ul>
+                  </nav>
+                </div>
+
+                <div class="col-md-2">
+                  <button type="button" class="btn btn-primary" id="btn_proInsert" role="button">상품등록</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -258,72 +269,68 @@ desired effect
 <%@include file="/WEB-INF/views/admin/include/plugin2.jsp" %>
 <script src="/bower_components/ckeditor/ckeditor.js"></script>
 <script>
-  $(document).ready(() =>{
-    // ckeditor 환경설정. 자바스크립트 Ojbect문법
-    var ckeditor_config = {
-          resize_enabled : false,
-          enterMode : CKEDITOR.ENTER_BR,
-          shiftEnterMode : CKEDITOR.ENTER_P,
-          toolbarCanCollapse : true,
-          removePlugins : "elementspath", 
-          //업로드 탭기능추가 속성. CKEditor에서 파일업로드해서 서버로 전송클릭하면 , 이 주소가 동작된다.
-          filebrowserUploadUrl: '/admin/product/imageUpload' 
-    }
-	
-	 
-    CKEDITOR.replace("pro_content",ckeditor_config);
+	$(document).ready(function() {
 
-    // 1차 카테고리를 선택했을때
-    $("#firstCategory").change(function() {
-      // $(this) : option태그중 선택한 option 태그를 가리킴.
-      let cg_parent_code = $(this).val();
+  let actionForm = $("#actionForm");
+  
+  // [이전] 1 2 3 4 5 [다음] 이벤트 설정 <a>태그
+  $(".movepage").on("click", function(e) {
+    e.preventDefault(); // a태그의 링크기능 제거 + href속성에 페이지 번호를 숨겨둠.
 
-      // console.log("1차 카테고리 코드" , cg_code);
+    actionForm.attr("action", "/admin/product/pro_list");
+    actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 
-      // 1차 카테고리 선택에 의한 2차 카테고리 정보를 가져오는 url
-      let url = "/admin/category/secondCategory/" + cg_parent_code; //".json";
-      
-      // $.getJSON() : 스프링에 요청시 데이터를 json으로 받는 기능
-      $.getJSON(url,function(secondCategoryList) {
-        // console.log("2차 카테고리 코드" , secondCategoryList);
+    actionForm.submit();
+  });
+		
+  // 목록에서 제목행 체크박스 선택
+  let isCheck = true;
+  $("#checkAll").on("click",function(){
+    $("input[name='check']").prop("checked",this.checked);
+    isCheck = this.checked;
+  });
+  // 목록에서 데이터행 체크박스 선택
+  $("input[name='check']").on("click",function() {
+    // 제목행 체크 상태 변경
+    $("#checkAll").prop("checked",this.checked);
 
-        // console.log("2차 카테고리 개수",secondCategoryList.length + 1);
-
-        // 2차 카테고리 select태그참조
-        let secondCategory = $("#secondCategory");
-        let optionStr = "";
-
-        // find("css선택자") : 태그명 , id속성이름 , class속성이름
-        secondCategory.find("option").remove(); // 2차 카테고리의 option제거
-
-        for(let i=0; i<secondCategoryList.length; i++){
-          optionStr += "<option value='" + secondCategoryList[i].cg_code + "'>" + secondCategoryList[i].cg_name + "</option>";
-        }
-        // console.log(optionStr);
-        secondCategory.append(optionStr); // 2차 카테고리 <option>태그들이 추가. 
-
-      });
-    });
-
-    // 파일 첨부시 이미지 미리보비
-    // 파일첨부에 따른 이벤트관련정보를 e라는 매개변수로 통하여, 참조가됨.
-    $("#uploadFile").change(function(e) {
-      let file = e.target.files[0];
-      let reader = new FileReader(); // 첨부된 파일을 이동하여 , File 객체를 생성하는 용도
-      reader.readAsDataURL(file);
-
-      reader.onload = function(e){
-          // event.target.result : reader객체의 이미지 파일 정보
-        $("#img_preview").attr("src", e.target.result);
-      };
-          
-    });
-
-    $("#btnCancel").click(()=>{
-      if(!confirm("취소 하시겠습니까?")) return;
-      history.back();
+    // 데이터 행의 체크박스 상태를 확인해서 제목행 체크상태 변경
+    $("input[name='check']").each(function() {
+      if(!$(this).is(":checked")) {
+        $("#checkAll").prop("checked",false);
+      }
     });
   });
+  // 체크박스수정 버튼 클릭
+  $("#btn_check_modify").on("click",function() {
+    //체크박스 유무 확인
+    if($("input[name='check']:checked").length == 0) {
+      alert("수정할 상품을 체크하세요.");
+      return;
+    }
+
+    // 배열 문법
+    let pro_num_arr = []; // 체크된 상품코드 배열
+    let pro_price_arr = []; // 체크된 상품가격 배열
+    let pro_buy_arr = []; // 체크된 상품진열 배열
+
+    // 데이터행에서 체크된 체크박스 선택자
+    $("input[name='check']:checked").each(function() {
+      pro_num_arr.push($(this).val());
+      // pro_price_arr.push($(this).parent().parent()); 의 this는 체크박스를의미 첫번째 parent는 td 그다음 parent tr을 의미한다
+      pro_price_arr.push($(this).parent().parent().find("input[name='pro_price']").val());
+      pro_buy_arr.push($(this).parent().parent().find("select[name='pro_buy']").val());
+    });
+
+    console.log("상품코드",pro_num_arr);
+    console.log("상품가격",pro_price_arr);
+    console.log("상품진열",pro_buy_arr);
+  });
+
+  $("#btn_proInsert").click(function() { 
+    location.href = "/admin/product/pro_insert";
+  });
+});
 </script>
 </body>
 </html>

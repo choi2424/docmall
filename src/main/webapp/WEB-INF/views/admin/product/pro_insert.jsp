@@ -10,7 +10,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 2 | Starter</title>
+  <title>DocMall  | Admin</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <%@include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
@@ -126,8 +126,8 @@ desired effect
                   <label for="pro_buy" class="col-sm-2 col-form-label">판매여부</label> 
                   <div class="col-sm-4">
                     <select class="form-control" id="pro_buy" name="pro_buy">
-                      <option value="가능">판매가능</option>
-                      <option value="불가능">판매불가능</option>
+                      <option value="Y">판매가능</option>
+                      <option value="N">판매불가능</option>
                     </select>
                   </div>
                 </div>

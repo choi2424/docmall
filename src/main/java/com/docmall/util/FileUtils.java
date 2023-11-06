@@ -8,6 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import net.coobird.thumbnailator.Thumbnailator;
@@ -103,5 +107,31 @@ public class FileUtils {
 		}
 		
 		return isImageType;
+	}
+	
+	// 프로젝트 외부폴더에서 관리되고 있는 상품이미지를 브라우저의 <img src="test.jpg"> 이미지 태그로부터 요청이 들어왔을때 바이트 배열로 보내주는 작업.
+	// String uploadPath : 업로드 폴더 경로
+	// String fuleName : 날자 폴더경로를 포함한 파일명.
+	// ResponseEntity 클래스 - 1) 헤더(header) 2) 바디(body)-데이터 3) 상태코드
+	public static ResponseEntity<byte[]> getFile(String uploadPath, String fullName) throws Exception {
+		
+		ResponseEntity<byte[]> entity = null;
+		
+		File file = new File(uploadPath, fullName); // 상품이미지 파일을 참조하는 파일객체
+		
+		if(!file.exists()) {
+			return entity; // 파일이 해당 경로에 존재하지 않는다면 null로 리턴.
+		}
+		
+		// 1)Header
+		// Files.probeContentType(file.toPath()) : image/jpg
+		// file : 918b3d4e-8e4d-4f67-8243-c96a3f725120_KakaoTalk_20230816_112308017.jpg
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", Files.probeContentType(file.toPath()));
+		
+		entity = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.OK);
+		
+		return entity;
+		
 	}
 }

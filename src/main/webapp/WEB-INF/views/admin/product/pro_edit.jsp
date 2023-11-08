@@ -62,6 +62,13 @@ desired effect
           <div class="box box-primary">
             <div class="box-header with-border">
               <h3 class="box-title mt-5">Product Edit</h3>
+              <form id="actionForm" action="" method="get">
+                <input type="hidden" name="pageNum" id="pageNum" value="${cri.pageNum}" />
+                <input type="hidden" name="amount" id="amount" value="${cri.amount}" />
+                <input type="hidden" name="type" id="type" value="${cri.type}" />
+                <input type="hidden" name="keyword" id="keyword" value="${cri.keyword}" />
+                <input type="hidden" name="pro_num" id="pro_num" />
+              </form>
             </div>
             <form role="form" method="post" action="/admin/product/pro_edit" enctype="multipart/form-data">
               <div class="box-body">
@@ -79,12 +86,16 @@ desired effect
                   <div class="col-sm-4">
                     <select class="form-control" id="secondCategory" name="cg_code">
                       <option>2차 카테고리 선택</option>
+                      <c:forEach items="${second_categoryList }" var="categoryVO">
+                        <option value="${categoryVO.cg_code }" ${categoryVO.cg_code == productVO.cg_code ? 'selected' : ''} >${categoryVO.cg_name }</option>
+                      </c:forEach>
                     </select>
                   </div>
                 </div>
                 <div class="form-group row">
                   <label for="pro_name" class="col-sm-2 col-form-label">상품명</label> 
                   <div class="col-sm-4">
+                    <input type="hidden" name="pro_num" value="${productVO.pro_num}">
                     <input type="text" class="form-control" name="pro_name" id="pro_name" value="${productVO.pro_name}">
                   </div>
                   <label for="pro_price" class="col-sm-2 col-form-label">상품가격</label> 
@@ -106,10 +117,13 @@ desired effect
                   <label class="col-sm-2 col-form-label">상품이미지</label> 
                   <div class="col-sm-4">
                     <input type="file" class="form-control" name="uploadFile" id="uploadFile">
+                    <!-- 상품 이미지 변경시 기존이미지 삭제를 위하여 사용됨 -->
+                    <input type="hidden" name="pro_up_folder" value="${productVO.pro_up_folder}">
+                    <input type="hidden" name="pro_img" value="${productVO.pro_img}">
                   </div>
                   <label class="col-sm-2 col-form-label">미리보기 이미지</label> 
                   <div class="col-sm-4">
-                    <img id="img_preview" style="width: 200px; height:200px;" />
+                    <img id="img_preview" style="width: 200px; height:200px;" src="/admin/product/imageDisplay?dateFolderName=${productVO.pro_up_folder }&fileName=${productVO.pro_img }"/>
                   </div>
                 </div>
                 <div class="form-group row">
@@ -137,7 +151,7 @@ desired effect
                   <ul class="uploadedlist"></ul>
                 </div>
                 <div class="text-center">
-                  <button type="submit" class="btn btn-primary">상품수정</button>
+                  <button type="button" id="btn_modify" class="btn btn-primary">상품수정</button>
                   <button type="button" id="btnCancel" class="btn btn-primary">취소</button>
                 </div>
               </div>
@@ -247,8 +261,10 @@ desired effect
           //업로드 탭기능추가 속성. CKEditor에서 파일업로드해서 서버로 전송클릭하면 , 이 주소가 동작된다.
           filebrowserUploadUrl: '/admin/product/imageUpload' 
     }
+
+    let actionForm = $("#actionForm");
 	
-	 
+	
     CKEDITOR.replace("pro_content",ckeditor_config);
 
     // 1차 카테고리를 선택했을때
@@ -300,6 +316,19 @@ desired effect
     $("#btnCancel").click(()=>{
       if(!confirm("취소 하시겠습니까?")) return;
       history.back();
+    });
+
+    $("#btn_modify").click(function() { 
+      
+      // 뒤로가기 클릭후 다시 수정버튼 클릭시 코드 중복되는 부분때문에 제거
+      // actionForm.find("input[name=pro_num]").remove();
+
+      // <input type="hidden" name="pro_num" id="pro_num" />
+      // actionForm.append('<input type="hidden" name="pro_num" id="pro_num" value="' + pro_num + '" />');
+      
+      actionForm.attr("method","get");
+      actionForm.attr("action","/admin/product/pro_list");
+      actionForm.submit();
     });
   });
 </script>

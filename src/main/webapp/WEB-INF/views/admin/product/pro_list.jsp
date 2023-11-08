@@ -105,7 +105,7 @@ desired effect
                         <td>${productVO.pro_num }</td>
                         <td>
                           <a class="move" href="#" data-bno="${productVO.pro_num}"><img src="/admin/product/imageDisplay?dateFolderName=${productVO.pro_up_folder }&fileName=s_${productVO.pro_img }"></a>
-                          <a class="move" href="#" data-bno="${productVO.pro_num}">${ productVO.pro_name }</a>
+                          <a class="move pro_name" href="#" data-bno="${productVO.pro_num}">${ productVO.pro_name }</a>
                         </td>
                         <td><input type="text" name="pro_price" value="${productVO.pro_price }" /></td>
                         <td><fmt:formatDate value="${ productVO.pro_date }" pattern="yyyy/MM/dd" /></td>
@@ -115,14 +115,14 @@ desired effect
                             <option value="N" ${productVO.pro_buy  == "N" ? 'selected' : ''}>판매불가능</option>
                           </select>
                         </td>
-                        <td><button type="button" class="btn btn-primary" name="btn_edit">수정</button></td>
-                        <td><button type="button" class="btn btn-danger btn_del">삭제</button></td>
+                        <td><button type="button" class="btn btn-primary" name="btn_pro_edit">수정</button></td>
+                        <td><button type="button" class="btn btn-danger btn_pro_del">삭제</button></td>
                       </tr>
                     </c:forEach>
                   </tbody>
                 </table>
                 <!--1)페이지번호 [이전] 1  2  3  4  5  6  [다음] 페이지 이동목적으로 클릭할 때 사용  -->
-                <!-- 2)목록에서 제목 클릭할 때 사용  action="/board/get" -->
+                <!-- 2)목록에서 제목 클릭할 때 사용 -->
                 <form id="actionForm" action="" method="get">
                   <input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
                   <input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
@@ -391,7 +391,7 @@ desired effect
     });
 
     // 상품 수정
-    $("button[name='btn_edit']").on("click",function() {
+    $("button[name='btn_pro_edit']").on("click",function() {
       
       //수정 상품코드
       let pro_num = $(this).parent().parent().find("input[name='check']").val();
@@ -408,7 +408,30 @@ desired effect
       actionForm.attr("action","/admin/product/pro_edit");
       actionForm.submit();
       
-    
+    });
+
+    // 화살표 함수 사용시 화살표 함수 내에서의 this는 외부 스코프의 this를 가리킴 
+    // 이 함수 내에서의 this는 이 클릭 이벤트가 발생한 요소를 가리킴
+    $(".btn_pro_del").on("click",function() {
+
+      // text() : 입력양식태그가 아닌 일반태그의 값을 변경하거나 읽을 때 사용
+      let pro_name = $(this).parent().parent().find(".pro_name").text();
+      if(!confirm(pro_name + "상품을 삭제하시겠습니까?"))return;
+
+      // val() : input, select, textarea 태그의 값을 변경하거나 읽을 때 사용
+      let pro_num = $(this).parent().parent().find("input[name='check']").val();
+      console.log("상품코드",pro_num);
+
+      // 뒤로가기 클릭후 다시 수정버튼 클릭시 코드 중복되는 부분때문에 제거
+      actionForm.find("input[name=pro_num]").remove();
+
+      // <input type="hidden" name="pro_num" id="pro_num" />
+      actionForm.append('<input type="hidden" name="pro_num" id="pro_num" value="' + pro_num + '" />');
+      
+      actionForm.attr("method","post");
+      actionForm.attr("action","/admin/product/pro_delete");
+      actionForm.submit();
+
     });
 
   });

@@ -71,7 +71,7 @@
           <div class="form-group row">
             <label for="mbsp_email" class="col-2">이메일</label>
             <div class="col-10">
-              <input type="email" class="form-control" name="mbsp_email" id="mbsp_email" value="${memberVO.mbsp_email }" placeholder="e-mail@address">
+              <input type="email" class="form-control" name="mbsp_email" id="mbsp_email" value="${memberVO.mbsp_email }" >
             </div>
           </div>
 
@@ -107,7 +107,7 @@
         </div>
 
       <div class="box-footer">
-        <button type="submit" class="btn btn-primary" id="btnmodify">확인</button><br>
+        <button type="button" class="btn btn-primary" id="btnmodify">확인</button><br>
         <button type="button" class="btn btn-danger" id="btnDelete">회원탈퇴</button>
       </div>
     </form>

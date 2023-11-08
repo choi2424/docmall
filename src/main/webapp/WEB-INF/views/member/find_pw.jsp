@@ -2,14 +2,14 @@
     pageEncoding="UTF-8"%>
 
 <!doctype html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.101.0">
-    <title>Pricing example · Bootstrap v4.6</title>
+    <title>DocMall 비밀번호 찾기</title>
 
     <!-- Bootstrap core CSS -->
     <%@include file="/WEB-INF/views/comm/plugin2.jsp" %>
@@ -47,30 +47,27 @@
   <div class="text-center">
     <div class="box box-primary">
       <div class="box-header with-border">
-      <h3 class="box-title">로그인</h3>
+      <h3 class="box-title">비밀번호 찾기</h3>
       </div>
       
-      <form role="form" id="loginForm" method="post" action="/member/login">
+      <form role="form" id="find_pwForm" method="post" action="/member/find_id">
       <div class="box-body">
         <div class="form-group row">
-          <label for="mbsp_id" class="col-2">아이디</label>
+          <label for="mbsp_name" class="col-2">아이디</label>
           <div class="col-10">
             <input type="text" class="form-control" name="mbsp_id" id="mbsp_id" placeholder="아이디 입력">
           </div>
         </div>
         <div class="form-group row">
-          <label for="mbsp_password" class="col-2">비밀번호</label>
+          <label for="mbsp_email" class="col-2">이메일</label>
           <div class="col-10">
-            <input type="password" class="form-control" name="mbsp_password" id="mbsp_password" placeholder="비밀번호 입력">
+            <input type="text" class="form-control" name="mbsp_email" id="mbsp_email" placeholder="이메일 입력">
           </div>
         </div>
       </div>
       
       <div class="box-footer">
-      <button type="button" id="btnLogin" class="btn btn-primary">로그인</button>
-      <button type="button" id="btnJoin" class="btn btn-primary">회원가입</button>
-      <button type="button" id="find_id" class="btn btn-primary">아이디찾기</button>
-      <button type="button" id="find_pw" class="btn btn-primary">비밀번호찾기</button>
+      <button type="button" id="btn_find_pw" class="btn btn-primary">확인</button>
       </div>
       </form>
       </div>
@@ -93,45 +90,28 @@
 
   $(document).ready(() => {
 
-    let loginForm = $("#loginForm");// form 태그 참조 <form role="form" id="loginForm" method="post" action="">
-    
-    // 회원가입 버튼
-    $("#btnJoin").click(() => {
-      location.href = "/member/join";
-    });
+    let find_pwForm = $("#find_pwForm");// form 태그 참조 <form role="form" id="loginForm" method="post" action="">
 
-    // 로그인 버튼
-    $("#btnLogin").click(() => {
+    // 확인버튼 클릭
+    $("#btn_find_pw").click(()=>{
 
-      // 아이디 입력검사
+      // 이름 입력검사
       if($("#mbsp_id").val() =="") {
         alert("아이디를 입력해주세요");
         $("#mbsp_id").focus();
         return;
       }
 
-      // 비밀번호를 입력검사
-      if($("#mbsp_password").val() =="") {
-        alert("비밀번호를 입력해주세요");
-        $("#mbsp_password").focus();
+      // 이메일 입력검사
+      if($("#mbsp_email").val() =="") {
+        alert("이메일를 입력해주세요");
+        $("#mbsp_email").focus();
         return;
       }
 
       
       // 폼 전송작업
-      loginForm.submit();
-    });
-    
-    // 아이디 찾기
-    $("#find_id").click(()=>{
-
-      location.href = "/member/find_id";
-    });
-    find_pw
-    // 비밀번호 찾기
-    $("#find_pw").click(()=>{
-
-    location.href = "/member/find_pw";
+      find_pwForm.submit();
     });
   });
 

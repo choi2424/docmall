@@ -15,4 +15,6 @@ public interface MemberService {
 	void loginTimeUpdate(String mbsp_id);
 	
 	void delete(String mbsp_id);
+	
+	String find_id(String mbsp_name,String mbsp_email);
 }

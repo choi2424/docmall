@@ -63,4 +63,8 @@
 			MBSP_ID = #{mbsp_id}
 		
 	</delete>
+	
+	<select id="find_id" resultType="String">
+		SELECT MBSP_ID FROM MBSP_TBL WHERE MBSP_NAME = #{mbsp_name} AND MBSP_EMAIL = #{mbsp_email}
+	</select>
 </mapper>

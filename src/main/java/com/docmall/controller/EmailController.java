@@ -53,30 +53,30 @@ public class EmailController {
 		return entity;		
 	}
 	
-		// 인증코드 확인 = 세션형태로 저장한 정보를 이용
-		@GetMapping("/confirmAuthCode")
-		public ResponseEntity<String> confirmAuthcode(String authCode,HttpSession session) {
+	// 인증코드 확인 = 세션형태로 저장한 정보를 이용
+	@GetMapping("/confirmAuthCode")
+	public ResponseEntity<String> confirmAuthcode(String authCode,HttpSession session) {
 			
-			ResponseEntity<String> entity = null;
+		ResponseEntity<String> entity = null;
 			
 		
-			//String sAuthCode = "";
-			if(session.getAttribute("authCode") != null) {
-				// 인증일치 여부
-				if(authCode.equals(session.getAttribute("authCode"))) {
-					entity = new ResponseEntity<String>("success",HttpStatus.OK); 
-				}else {
-					entity = new ResponseEntity<String>("fail",HttpStatus.OK);
-				}
+		//String sAuthCode = "";
+		if(session.getAttribute("authCode") != null) {
+			// 인증일치 여부
+			if(authCode.equals(session.getAttribute("authCode"))) {
+				entity = new ResponseEntity<String>("success",HttpStatus.OK); 
 			}else {
-				// 세션이 소멸되었을때
-				entity = new ResponseEntity<String>("request",HttpStatus.OK);
+				entity = new ResponseEntity<String>("fail",HttpStatus.OK);
 			}
-			
-			
-			
-			return entity;
+		}else {
+			// 세션이 소멸되었을때
+			entity = new ResponseEntity<String>("request",HttpStatus.OK);
 		}
 		
 		
+		
+		return entity;
+	}
+	
+	
 }

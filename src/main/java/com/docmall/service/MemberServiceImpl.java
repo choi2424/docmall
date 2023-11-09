@@ -60,4 +60,10 @@ public class MemberServiceImpl implements MemberService{
 		// TODO Auto-generated method stub
 		return memberMapper.find_id(mbsp_name, mbsp_email);
 	}
+
+	@Override
+	public String find_pw(String mbsp_id, String mbsp_email) {
+		// TODO Auto-generated method stub
+		return memberMapper.find_pw(mbsp_id, mbsp_email);
+	}
 }

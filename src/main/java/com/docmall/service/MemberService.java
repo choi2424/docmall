@@ -17,4 +17,6 @@ public interface MemberService {
 	void delete(String mbsp_id);
 	
 	String find_id(String mbsp_name,String mbsp_email);
+	
+	String find_pw(String mbsp_id,String mbsp_email);
 }

@@ -50,7 +50,7 @@
       <h3 class="box-title">비밀번호 찾기</h3>
       </div>
       
-      <form role="form" id="find_pwForm" method="post" action="/member/find_id">
+      <form role="form" id="find_pwForm" method="post" action="/member/find_pw">
       <div class="box-body">
         <div class="form-group row">
           <label for="mbsp_name" class="col-2">아이디</label>
@@ -60,8 +60,20 @@
         </div>
         <div class="form-group row">
           <label for="mbsp_email" class="col-2">이메일</label>
-          <div class="col-10">
+          <div class="col-8">
             <input type="text" class="form-control" name="mbsp_email" id="mbsp_email" placeholder="이메일 입력">
+          </div>
+          <div class="col-2">
+            <button type="button" class="btn btn-outline-info" id="mailAuth">메일인증</button>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="authCode" class="col-2">메일인증</label>
+          <div class="col-8">
+            <input type="text" class="form-control" name="authCode" id="authCode" placeholder="인증코드 입력">
+          </div>
+          <div class="col-2">
+            <button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증확인</button>
           </div>
         </div>
       </div>
@@ -91,7 +103,59 @@
   $(document).ready(() => {
 
     let find_pwForm = $("#find_pwForm");// form 태그 참조 <form role="form" id="loginForm" method="post" action="">
+    let isConfirmAuth = false; // 이메일 중복체크 사용유무 확인
 
+    // 이메일 인증코드 발송
+    $("#mailAuth").click(() => {
+      if($("#mbsp_email").val() == ""){
+        alert("이메일을 입력하세요.");
+        $("#mbsp_email").focus();
+        return;
+      }
+
+      $.ajax({
+      url : "/email/authCode",
+      type : "get" ,
+      dataType : "text", // 스프링에서 보내는 데이터의 타입.   'success'
+      data : {receiverMail: $("#mbsp_email").val()},
+      success : (result) => {
+        if(result == 'success') {
+          alert("인증메일이 발송되었습니다. 메일 확인바랍니다.");
+        }
+      }
+      });
+    });
+
+    $("#btnConfirmAuth").click(() => {
+
+      if($("#authCode").val() =="") {
+        alert("인증코드를 입력해주세요.");
+        $("#authCode").focus();
+        return;
+      }
+
+      // 이메일인증확인 요청
+      $.ajax({
+        url : "/email/confirmAuthCode",
+        type : "get",
+        dataType : "text",
+        data : {authCode : $("#authCode").val()} ,
+        success : (result) => {
+          if(result == "success") {
+            alert("인증성공");
+            isConfirmAuth = true;
+          }else if(result == "fail"){
+            alert("인증코드 불일치");
+            isConfirmAuth = false;
+          }else if(result == "request"){
+            alert("인증코드 유효시간 초과");
+            $("#authCode").val("");
+            isConfirmAuth = false;
+          }
+        }
+      });
+    });
+    
     // 확인버튼 클릭
     $("#btn_find_pw").click(()=>{
 
@@ -109,7 +173,10 @@
         return;
       }
 
-      
+      if(!isConfirmAuth){
+        alert("이메일 인증확인 바랍니다");
+        return;
+      }
       // 폼 전송작업
       find_pwForm.submit();
     });

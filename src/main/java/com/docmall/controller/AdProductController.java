@@ -165,6 +165,8 @@ public class AdProductController {
 		int totelCount = adProductService.getTotelCount(cri);
 		model.addAttribute("pageMaker",new PageDTO(cri, totelCount));
 		
+		log.info("상품검색정보" + cri);
+		
 	}
 	
 	// 상품 리스트에서 보여줄 이미지 <img sec="매핑주소">
@@ -237,6 +239,7 @@ public class AdProductController {
 		productVO.setPro_up_folder(productVO.getPro_up_folder().replace("\\", "/")); // 이스케이프 시퀀스 문자
 		model.addAttribute("productVO", productVO);
 		
+		log.info("상품검색정보" + cri);
 		
 		// 1차 전체 카테고리 GlobalCOntrollerAdvice 클래스 Model 참조
 

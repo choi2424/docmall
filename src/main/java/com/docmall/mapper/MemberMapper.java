@@ -22,4 +22,9 @@ public interface MemberMapper {
 			@Param("mbsp_name") String mbsp_name ,
 			@Param("mbsp_email") String mbsp_email
 	);
+	
+	String find_pw(
+			@Param("mbsp_id") String mbsp_id ,
+			@Param("mbsp_email") String mbsp_email
+	);
 }

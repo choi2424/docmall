@@ -137,7 +137,7 @@ public class MemberController {
 		log.info("회원수정 전 confirm 확인");
 	}
 	
-	// 회원수정페이지로 이동전 인증 확인
+	// 회원수정페이지
 	@PostMapping("/confirmPw")
 	public String confirmPw(LoginDTO dto,RedirectAttributes rttr,HttpSession session) throws Exception {
 		
@@ -161,7 +161,7 @@ public class MemberController {
 			}
 		}else {
 			// 아이디가 일치하지 않음
-			url = "/member/login"; // 로그인 폼주소
+			url = "/member/confirmPw"; // 로그인 폼주소
 			msg = "아이디가 일치하지않습니다";
 			rttr.addFlashAttribute("msg", msg); // 로그인 폼 jsp파일에서 사용목적
 		}
@@ -202,25 +202,53 @@ public class MemberController {
 		return "redirect:/";
 	}
 	
-	// 마이 페이지 확인폼
-	@GetMapping("/mypage")
-	public String mypage(HttpSession session, Model medel,RedirectAttributes rttr) throws Exception {
+	// 회원수정페이지로 이동전 인증 확인 폼
+	@GetMapping("/confirmPw2")
+	public void confirmPw2(HttpSession session) {
+		log.info("회원수정 전 confirmPw2 확인");
+	}
+	
+	// 회원수정 인증
+	@PostMapping("/confirmPw2")
+	public String confirmPw2(LoginDTO dto,RedirectAttributes rttr,HttpSession session) throws Exception {
 			
-		String mbsp_id = ((MemberVO) session.getAttribute("loginStatus")).getMbsp_id();
+		log.info("회원수정전 인증 재확인 : " + dto);
+		
+		MemberVO db_vo = memberService.login(dto.getMbsp_id());
+		
 		String url = "";
-			
-		if(mbsp_id == null) {
-			url = "/member/login";
+		String msg = "";
+		
+		// 아이디가 일치하면
+		if(db_vo != null) {
+			// 사용자가 입력한 비밀번호(평문 텍스트) 와 DB에서 가져온 암호화된 비밀번호 일치여부 검사.  
+			if(passwordEncoder.matches(dto.getMbsp_password(), db_vo.getMbsp_password())) {
+				url = "/member/mypage"; // 회원수정폼 주소			
+			}else {
+				// 비밀번호가 일치하지 않음
+				url = "/member/confirmPw2"; //비밀번호확인 폼
+				msg = "비밀번호가 일치하지않습니다";
+				rttr.addFlashAttribute("msg", msg); // 로그인 폼 jsp파일에서 사용목적
+			}
 		}else {
-			url = "/member/mypage";
+			// 아이디가 일치하지 않음
+			url = "/member/confirmPw2"; // 로그인 폼주소
+			msg = "아이디가 일치하지않습니다";
+			rttr.addFlashAttribute("msg", msg); // 로그인 폼 jsp파일에서 사용목적
 		}
-			
-		MemberVO db_vo = memberService.login(mbsp_id);
-		medel.addAttribute("memberVO", db_vo);
-			
 		return "redirect:" + url;
 	}
+	
+	// 마이페이지 폼
+	@GetMapping("/mypage")
+	public void mypage(HttpSession session, Model model) {
+		String mbsp_id = ((MemberVO)session.getAttribute("loginStatus")).getMbsp_id();
 		
+		
+		MemberVO db_vo = memberService.login(mbsp_id);
+		model.addAttribute("memberVO",db_vo);
+	}
+	
 	// 회원탈퇴 폼
 	@GetMapping("/delConfirmPw")
 	public void delConfirmPw() {
@@ -296,6 +324,24 @@ public class MemberController {
 	@GetMapping("/find_pw")
 	public void find_pw() {
 		
+	}
+	
+	// 비밀번호 찾기
+	@PostMapping("/find_pw")
+	public String find_pw(String mbsp_id,String mbsp_email,RedirectAttributes rttr) {
+		String msg = "";
+		String url = "";
+		String result = memberService.find_pw(mbsp_id, mbsp_email);
+		if(result == null) {
+			msg = "아이디나 이메일이 정확하지 않습니다";
+			url = "/member/find_pw";
+			rttr.addFlashAttribute("msg", msg);
+		}else {
+			msg = "비밀번호를 변경해주세요";
+			url = "/member/find_pw";
+			rttr.addFlashAttribute("msg", msg);
+		}
+		return "redirect:" + url;
 	}
 	
 	

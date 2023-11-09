@@ -67,10 +67,9 @@ desired effect
                 <input type="hidden" name="amount" id="amount" value="${cri.amount}" />
                 <input type="hidden" name="type" id="type" value="${cri.type}" />
                 <input type="hidden" name="keyword" id="keyword" value="${cri.keyword}" />
-                <input type="hidden" name="pro_num" id="pro_num" />
               </form>
             </div>
-            <form role="form" method="post" action="/admin/product/pro_edit" enctype="multipart/form-data">
+            <form role="form" id="editForm" method="post" action="/admin/product/pro_edit" enctype="multipart/form-data">
               <div class="box-body">
                 <div class="form-group row">
                   <label class="col-sm-2 col-form-label">1차 카테고리</label> 
@@ -150,12 +149,12 @@ desired effect
                 <div class="form-group">
                   <ul class="uploadedlist"></ul>
                 </div>
-                <div class="text-center">
-                  <button type="button" id="btn_modify" class="btn btn-primary">상품수정</button>
-                  <button type="button" id="btnCancel" class="btn btn-primary">취소</button>
-                </div>
               </div>
             </form>
+            <div class="text-center">
+              <button type="button" id="btn_modify" class="btn btn-primary">상품수정</button>
+              <button type="button" id="btnCancel" class="btn btn-primary">취소</button>
+            </div>
           </div>
         </div>
       </div>
@@ -263,6 +262,7 @@ desired effect
     }
 
     let actionForm = $("#actionForm");
+    let editForm = $("editForm");
 	
 	
     CKEDITOR.replace("pro_content",ckeditor_config);
@@ -321,7 +321,7 @@ desired effect
     $("#btn_modify").click(function() { 
       
       // 뒤로가기 클릭후 다시 수정버튼 클릭시 코드 중복되는 부분때문에 제거
-      // actionForm.find("input[name=pro_num]").remove();
+      actionForm.find("input[name=pro_num]").remove();
 
       // <input type="hidden" name="pro_num" id="pro_num" />
       // actionForm.append('<input type="hidden" name="pro_num" id="pro_num" value="' + pro_num + '" />');

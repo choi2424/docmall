@@ -4,32 +4,36 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.docmall.mapper.UserProductMapper">
 
-	<select id="pro_list" resultType="com.docmall.domain.ProductVO" parameterType="com.docmall.dto.Criteria">
-   		<![CDATA[
-   		SELECT 
-   			PRO_NUM, CG_CODE, PRO_NAME, PRO_PRICE, PRO_DISCOUNT, PRO_PUBLISHER, PRO_CONTENT, PRO_UP_FOLDER, PRO_IMG, PRO_AMOUNT, PRO_BUY, PRO_DATE, PRO_UPDATEDATE
-		FROM (
-    		SELECT /*+ INDEX_DESC(PRODUCT_TBL pk_pro_num) */
-    			ROWNUM RN, PRO_NUM, CG_CODE, PRO_NAME, PRO_PRICE, PRO_DISCOUNT, PRO_PUBLISHER, PRO_CONTENT, PRO_UP_FOLDER, PRO_IMG, PRO_AMOUNT, PRO_BUY, PRO_DATE, PRO_UPDATEDATE
-    		FROM 
-                PRODUCT_TBL 
-    		WHERE
-    			CG_CODE = #{CG_CODE}
-    			AND
-    		 	ROWNUM <= #{cri.pageNum} * #{cri.amount}
-    		)
-		WHERE 
-			RN > (#{cri.pageNum} -1) * #{cri.amount}
-		]]> 
-   	</select>
+	<!--  CDATA 섹션 -->
+	<select id="pro_list" resultType="com.docmall.domain.ProductVO" parameterType="map">
+		<![CDATA[
+		select 
+    		PRO_NUM, CG_CODE, PRO_NAME, PRO_PRICE, PRO_DISCOUNT, PRO_PUBLISHER, PRO_CONTENT, PRO_UP_FOLDER, PRO_IMG, PRO_AMOUNT, PRO_BUY, PRO_DATE, PRO_UPDATEDATE
+		from 
+		    (
+		    select /*+INDEX_DESC(PRODUCT_TBL pk_pro_num) */
+		        rownum rn, PRO_NUM, CG_CODE, PRO_NAME, PRO_PRICE, PRO_DISCOUNT, PRO_PUBLISHER, PRO_CONTENT, PRO_UP_FOLDER, PRO_IMG, PRO_AMOUNT, PRO_BUY, PRO_DATE, PRO_UPDATEDATE
+		    from 
+		        PRODUCT_TBL
+		    where 
+		    
+		    	CG_CODE = #{cg_code}
+		    	and    
+		        rownum <= #{cri.pageNum} * #{cri.amount}
+		    )
+		where 
+		    rn > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+	</select>
 	
-	<!-- 전체 데이터수 -->
-   	<select id="getTotelCount" resultType="int">
-   		SELECT 
-   			COUNT(*) 
-   		FROM 
-   			PRODUCT_TBL 
-   		WHERE
-   			CG_CODE = #{CG_CODE}
-   	</select>
-</mapper>
+	<select id="getTotalCount" resultType="int">
+		select 
+			count(*) 
+		from 
+			PRODUCT_TBL 
+		where
+			CG_CODE = #{cg_code}
+	</select>
+	
+
+</mapper>  

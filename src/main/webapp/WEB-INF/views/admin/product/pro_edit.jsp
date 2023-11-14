@@ -62,12 +62,6 @@ desired effect
           <div class="box box-primary">
             <div class="box-header with-border">
               <h3 class="box-title mt-5">Product Edit</h3>
-              <form id="actionForm" action="" method="get">
-                <input type="hidden" name="pageNum" id="pageNum" value="${cri.pageNum}" />
-                <input type="hidden" name="amount" id="amount" value="${cri.amount}" />
-                <input type="hidden" name="type" id="type" value="${cri.type}" />
-                <input type="hidden" name="keyword" id="keyword" value="${cri.keyword}" />
-              </form>
             </div>
             <form role="form" id="editForm" method="post" action="/admin/product/pro_edit" enctype="multipart/form-data">
               <div class="box-body">
@@ -92,7 +86,11 @@ desired effect
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label for="pro_name" class="col-sm-2 col-form-label">상품명</label> 
+                  <label for="pro_name" class="col-sm-2 col-form-label">상품명</label>
+                  <input type="hidden" name="pageNum" id="pageNum" value="${cri.pageNum}" />
+                  <input type="hidden" name="amount" id="amount" value="${cri.amount}" />
+                  <input type="hidden" name="type" id="type" value="${cri.type}" />
+                  <input type="hidden" name="keyword" id="keyword" value="${cri.keyword}" /> 
                   <div class="col-sm-4">
                     <input type="hidden" name="pro_num" value="${productVO.pro_num}">
                     <input type="text" class="form-control" name="pro_name" id="pro_name" value="${productVO.pro_name}">
@@ -150,11 +148,11 @@ desired effect
                   <ul class="uploadedlist"></ul>
                 </div>
               </div>
+              <div class="text-center">
+                <button type="submit" id="btn_modify" class="btn btn-primary">상품수정</button>
+                <button type="button" id="btnCancel" class="btn btn-primary">취소</button>
+              </div>
             </form>
-            <div class="text-center">
-              <button type="button" id="btn_modify" class="btn btn-primary">상품수정</button>
-              <button type="button" id="btnCancel" class="btn btn-primary">취소</button>
-            </div>
           </div>
         </div>
       </div>
@@ -317,19 +315,21 @@ desired effect
       if(!confirm("취소 하시겠습니까?")) return;
       history.back();
     });
-
+    /*
     $("#btn_modify").click(function() { 
       
       // 뒤로가기 클릭후 다시 수정버튼 클릭시 코드 중복되는 부분때문에 제거
-      actionForm.find("input[name=pro_num]").remove();
+      editForm.find("input[name=pro_num]").remove();
 
       // <input type="hidden" name="pro_num" id="pro_num" />
       // actionForm.append('<input type="hidden" name="pro_num" id="pro_num" value="' + pro_num + '" />');
       
-      actionForm.attr("method","get");
-      actionForm.attr("action","/admin/product/pro_list");
-      actionForm.submit();
+      editForm.attr("method","get");
+      editForm.attr("action","/admin/product/pro_list");
+      
+      editForm.submit();
     });
+    */
   });
 </script>
 </body>

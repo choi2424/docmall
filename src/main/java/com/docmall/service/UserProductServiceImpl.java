@@ -22,9 +22,10 @@ public class UserProductServiceImpl implements UserProductService {
 		return userProductMapper.pro_list(cg_code, cri);
 	}
 
+
 	@Override
-	public int getTotelCount(Criteria cri) {
+	public int getTotalCount(Integer cg_code) {
 		// TODO Auto-generated method stub
-		return userProductMapper.getTotelCount(cri);
+		return userProductMapper.getTotalCount(cg_code);
 	}
 }

@@ -15,5 +15,5 @@ public interface UserProductMapper {
 			@Param("cri") Criteria cri
 	);
 	
-	int getTotelCount(Criteria cri);
+	int getTotalCount(Integer cg_code);
 }

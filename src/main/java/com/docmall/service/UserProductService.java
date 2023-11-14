@@ -9,5 +9,5 @@ public interface UserProductService {
 	
 	List<ProductVO> pro_list(Integer cg_code,Criteria cri);
 	
-	int getTotelCount(Criteria cri);
+	int getTotalCount(Integer cg_code);
 }

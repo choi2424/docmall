@@ -299,6 +299,7 @@ desired effect
         }
       });
     });
+    
     // 체크박스수정1 버튼 클릭
     $("#btn_check_modify1").on("click",function() {
       //체크박스 유무 확인
@@ -320,9 +321,9 @@ desired effect
         pro_buy_arr.push($(this).parent().parent().find("select[name='pro_buy']").val());
       });
 
-      console.log("상품코드",pro_num_arr);
-      console.log("상품가격",pro_price_arr);
-      console.log("상품진열",pro_buy_arr);
+      // console.log("상품코드",pro_num_arr);
+      // console.log("상품가격",pro_price_arr);
+      // console.log("상품진열",pro_buy_arr);
       
       $.ajax({
         url: '/admin/product/pro_checked_modify1', // 체크상품수정 스프링 매핑주소

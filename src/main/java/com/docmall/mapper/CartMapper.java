@@ -14,4 +14,8 @@ public interface CartMapper {
 	List<CartDTOList> cart_list(String mbsp_id);
 	
 	void amount_change(@Param("cart_code") Long cart_code,@Param("cart_amount")int cart_amount);
+	
+	void cart_list_del(Long cart_code);
+	
+	void cart_checked_del(Long cart_code);
 }

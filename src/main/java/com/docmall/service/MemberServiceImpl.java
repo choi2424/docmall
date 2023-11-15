@@ -62,8 +62,14 @@ public class MemberServiceImpl implements MemberService{
 	}
 
 	@Override
-	public String find_pw(String mbsp_id, String mbsp_email) {
+	public MemberVO find_pw(String mbsp_id, String mbsp_email) {
 		// TODO Auto-generated method stub
 		return memberMapper.find_pw(mbsp_id, mbsp_email);
+	}
+
+	@Override
+	public void change_password(String mbsp_id,String mbsp_password) {
+		// TODO Auto-generated method stub
+		memberMapper.change_password(mbsp_id,mbsp_password);
 	}
 }

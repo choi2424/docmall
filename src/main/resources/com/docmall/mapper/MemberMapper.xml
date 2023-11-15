@@ -68,7 +68,32 @@
 		SELECT MBSP_ID FROM MBSP_TBL WHERE MBSP_NAME = #{mbsp_name} AND MBSP_EMAIL = #{mbsp_email}
 	</select>
 	
-	<select id="find_pw" resultType="String">
-		SELECT MBSP_EMAIL FROM MBSP_TBL WHERE MBSP_ID = #{mbsp_id} AND MBSP_EMAIL = #{mbsp_email}
+	<select id="find_pw" resultType="com.docmall.domain.MemberVO">
+		SELECT 
+			MBSP_ID, 
+			MBSP_NAME, 
+			MBSP_EMAIL, 
+			MBSP_PASSWORD, 
+			MBSP_ZIPCODE, 
+			MBSP_ADDR, 
+			MBSP_DEADDR, 
+			MBSP_PHONE, 
+			MBSP_POINT, 
+			MBSP_LASTLOGIN, 
+			MBSP_DATESUB, 
+			MBSP_UPDATEDATE
+		FROM 
+			MBSP_TBL 
+		WHERE 
+			MBSP_ID = #{mbsp_id} AND MBSP_EMAIL = #{mbsp_email}
 	</select>
+	
+	<update id="change_password">
+		UPDATE
+			MBSP_TBL
+		SET
+			MBSP_PASSWORD = #{mbsp_password}
+		WHERE
+			MBSP_ID = #{mbsp_id}
+	</update>
 </mapper>

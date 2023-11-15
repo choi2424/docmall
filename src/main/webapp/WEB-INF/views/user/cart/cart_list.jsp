@@ -57,7 +57,7 @@
         <th scope="col">상품명</th>
         <th scope="col">판매가</th>
         <th scope="col">수량</th>
-        <th scope="col">할인</th>
+        <th scope="col">할인(%)</th>
         <th scope="col">합계</th>
         <th scope="col">비고</th>
       </tr>
@@ -72,24 +72,30 @@
           <td><a class="move pro_name" href="#" data-bno="${cart_list.pro_num}">${ cart_list.pro_name }</a></td>
           <td><span id="unitPrice">${ cart_list.pro_price }</span></td>
           <td><input type="number" name="cart_amount" value="${cart_list.cart_amount}" style="width: 35px;"> <button type="button" name="btn_cart_amount_change" class="btn btn-success">변경</button></td>
-          <td><span id="unitDiscount">${cart_list.pro_discount}</span></td>
+          <td><span id="unitDiscount">${cart_list.pro_discount}%</span></td>
           <td>
             <span class="unitTotalPrice" id="unitTotalPrice">
               ${(cart_list.pro_price - (cart_list.pro_price * cart_list.pro_discount / 100)) * cart_list.cart_amount}
             </span>
           </td>
-          <td><button type="button" class="btn btn-danger">삭제</button></td>
+          <td>
+            <button type="button" name="btn_ajax_cart_del" class="btn btn-danger">삭제(ajax사용)</button>
+            <button type="button" name="btn_nonAjax_cart_del" class="btn btn-danger">삭제(ajax미사용)</button>
+          </td>
         </tr>
       </c:forEach>
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="8"><button type="button" class="btn btn-danger">선택삭제</button></td>
+        <td colspan="8"><button type="button" id="btn_check_del" class="btn btn-danger">선택삭제</button></td>
       </tr>
       <tr>
         <td colspan="8" style="text-align: right;">
-          <span id="cart_total_price">최종결제금액 : ${cart_total_price} </span>
+          최종 결제금액 : <span id="cart_total_price">${cart_total_price} </span>
         </td>
+      </tr>
+      <tr>
+        <td colspan="8" style="text-align: center;"><button type="button" id="btn_order" class="btn btn-primary">주문하기</button></td>
       </tr>
     </tfoot>
   </table>
@@ -110,6 +116,59 @@
     $("#checkAll").on("click",function(){
       $("input[name='cart_code']").prop("checked",this.checked);
       isCheck = this.checked;
+    });
+
+    // 목록에서 데이터행 체크박스 선택
+    $("input[name='cart_code']").on("click",function() {
+      // 제목행 체크 상태 변경
+      $("#checkAll").prop("checked",this.checked);
+
+      // 데이터 행의 체크박스 상태를 확인해서 제목행 체크상태 변경
+      $("input[name='cart_code']").each(function() {
+        if(!$(this).is(":checked")) {
+          $("#checkAll").prop("checked",false);
+        }
+      });
+    });
+
+    // 선택삭제 버튼 클릭
+    $("#btn_check_del").on("click",function() {
+      //체크박스 유무 확인
+      // console.log("체크확인");
+      
+      if($("input[name='cart_code']:checked").length == 0) {
+        alert("삭제할 물품을 체크해주세요.");
+        return;
+      }
+      
+      if(!confirm("선택 상품을 삭제하시겠습니까?")) return;
+
+      let cart_code_arr = []; // 체크된 카트코드 배열
+
+      // 데이터행에서 체크된 체크박스 선택자
+      $("input[name='cart_code']:checked").each(function() {
+        cart_code_arr.push($(this).val());
+      });
+
+      // console.log("카트코드",cart_code_arr);
+
+      $.ajax({
+        url: '/user/cart/cart_checked_del', // 체크상품수정 스프링 매핑주소
+        type:'post', 
+        data:{cart_code_arr: cart_code_arr},
+        dataType : 'text',  //스프링에서 받아오는 값의 타입 text ,html ,json,xml 등등
+        success: function(result) {
+          if(result == 'success') {
+            alert("삭제완료");
+            location.href = "/user/cart/cart_list";
+          } else{
+            alert("삭제실패")
+          }
+        }
+      });
+
+
+
     });
 
     // 장바구니 목록에서 변경클릭시
@@ -139,19 +198,69 @@
             unitTotalPrice.text((unitPrice - (unitPrice * unitDiscount / 100)) * cart_amount);
             
             // 전체주문금액
-            let sumPrice = 0;
-
-            $(".unitTotalPrice").each(function() {
-              sumPrice += Number($(this).text()); // 총합에 더하기
-            });
-            $("#cart_total_price").text(sumPrice);
-            alert("체크상품이 수정되었습니다.");
+            fn_cart_sumPrice();
           }
         }
       });
     });
+
+    // 장바구니삭제 ajax사용
+    $("button[name='btn_ajax_cart_del']").on("click",function() {
+
+      let cart_code = $(this).parent().parent().find("input[name='cart_code']").val();
+
+      // console.log("장바구니코드확인", cart_code);
+
+      let btn_cart_del = $(this); // 선택된 버튼태그의 위치를 참조하기위해
+
+      let userConfirmed = confirm("정말 삭제하시겠습니까?");
+      if (userConfirmed) {
+        $.ajax({  
+          url : '/user/cart/cart_list_del',
+          type : 'post',
+          data : {cart_code : cart_code},
+          dataType : 'text',
+          success : function(result) {
+            if(result == 'success') {
+              alert("삭제되었습니다");
+
+              btn_cart_del.parent().parent().remove();
+
+              fn_cart_sumPrice();
+            }
+          }
+        });
+      }
+    });
+
+    // 장바구니 삭제 ajax미사용
+    $("button[name='btn_nonAjax_cart_del']").on("click",function() {
+
+      if(!confirm("정말 삭제하시겠습니까?")) return;
+
+      let cart_code = $(this).parent().parent().find("input[name='cart_code']").val();
+
+      location.href = "/user/cart/cart_list_del?cart_code=" + cart_code;
+
+    });
+
+    // 주문 정보 페이지
+    $("#btn_order").on("click",function() {
+      location.href = "/user/order/order_info";
+    });
+
+
 	});
 
+  // 전체 주문금액
+  function fn_cart_sumPrice() {
+    let sumPrice = 0;
+    $(".unitTotalPrice").each(function() {
+      sumPrice += Number($(this).text()); // 총합에 더하기
+    });
+    $("#cart_total_price").text(sumPrice);
+    // alert("체크상품이 수정되었습니다.");
+  }
   </script>  
   </body>
 </html>

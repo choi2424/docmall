@@ -328,21 +328,46 @@ public class MemberController {
 	
 	// 비밀번호 찾기
 	@PostMapping("/find_pw")
-	public String find_pw(String mbsp_id,String mbsp_email,RedirectAttributes rttr) {
+	public String find_pw(String mbsp_id,String mbsp_email,RedirectAttributes rttr,HttpSession session) {
 		String msg = "";
 		String url = "";
-		String result = memberService.find_pw(mbsp_id, mbsp_email);
+		MemberVO result = memberService.find_pw(mbsp_id, mbsp_email);
 		if(result == null) {
 			msg = "아이디나 이메일이 정확하지 않습니다";
 			url = "/member/find_pw";
 			rttr.addFlashAttribute("msg", msg);
 		}else {
 			msg = "비밀번호를 변경해주세요";
-			url = "/member/find_pw";
+			url = "/member/change_password";
 			rttr.addFlashAttribute("msg", msg);
+			session.setAttribute("change_password", result);
 		}
+		
+		
 		return "redirect:" + url;
 	}
 	
+	// 비밀번호 변경 폼
+	@GetMapping("/change_password")
+	public void change_password() {
+		
+	}
 	
+	// 비밀번호 변경
+	@PostMapping("/change_password")
+	public String change_password(HttpSession session,String mbsp_id,String mbsp_password,RedirectAttributes rttr) {
+		
+		MemberVO vo = (MemberVO)session.getAttribute("change_password");
+		
+		mbsp_id = vo.getMbsp_id();
+		
+		// db저장
+		memberService.change_password(mbsp_id, passwordEncoder.encode(mbsp_password));
+		
+		session.removeAttribute("change_password");
+		
+		return "redirect:/member/login";
+		
+		
+	}
 }

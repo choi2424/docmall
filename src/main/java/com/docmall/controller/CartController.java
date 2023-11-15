@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.docmall.domain.CartVO;
@@ -83,7 +84,7 @@ public class CartController {
 	// 수량변경코드
 	@ResponseBody
 	@PostMapping("/amount_change")
-	public ResponseEntity<String> amount_change(Long cart_code,int cart_amount) {
+	public ResponseEntity<String> amount_change(Long cart_code,int cart_amount) throws Exception {
 		
 		ResponseEntity<String> entity = null;
 		
@@ -91,7 +92,45 @@ public class CartController {
 		
 		entity = new ResponseEntity<String>("success",HttpStatus.OK);
 		
-		return entity ;
+		return entity;
 	}
 	
+	// 카트 리스트 개별삭제 ajax 사용
+	@ResponseBody
+	@PostMapping("/cart_list_del")
+	public ResponseEntity<String> cart_list_del(Long cart_code) throws Exception {
+		
+		ResponseEntity<String> entity = null;
+		
+		cartService.cart_list_del(cart_code);
+		
+		entity = new ResponseEntity<String>("success",HttpStatus.OK);
+		
+		return entity;
+	}
+	
+	// 카트 리스트 개별삭제 ajax 미사용
+	@GetMapping("/cart_list_del")
+	public String cart_list_del2(Long cart_code) throws Exception {
+		
+		cartService.cart_list_del(cart_code);
+		
+		return "redirect:/user/cart/cart_list";
+	}
+	
+	// 카트 체크선택 삭제
+	@ResponseBody
+	@PostMapping("/cart_checked_del")
+	public ResponseEntity<String> cart_checked_del(@RequestParam("cart_code_arr[]") List<Long> cart_code_arr) throws Exception {
+		
+//		log.info("카트코드 : " + cart_code_arr);
+		
+		ResponseEntity<String> entity = null;
+		
+		cartService.cart_checked_del(cart_code_arr);
+		
+		entity = new ResponseEntity<String>("success",HttpStatus.OK);
+		
+		return entity;
+	}
 }

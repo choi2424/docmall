@@ -54,7 +54,7 @@ public class KakaoPayServiceImpl {
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
 		
 		parameters.add("cid", "TC0ONETIME"); // 가맹점 코드, 10자
-		parameters.add("partner_order_id", ""+odr_code); // 가맹점 주문번호, 최대 100자
+		parameters.add("partner_order_id", ""+ odr_code); // 가맹점 주문번호, 최대 100자
 		parameters.add("partner_user_id", mbsp_id); // 가맹점 회원 id, 최대 100자
 		parameters.add("item_name", itemName); // 상품명, 최대 100자
 		parameters.add("quantity", ""+quantity); // 상품 수량

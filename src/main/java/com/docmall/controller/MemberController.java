@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.docmall.domain.MemberVO;
+import com.docmall.dto.EmailDTO;
 import com.docmall.dto.LoginDTO;
 import com.docmall.service.MemberService;
 
@@ -338,7 +339,7 @@ public class MemberController {
 			rttr.addFlashAttribute("msg", msg);
 		}else {
 			msg = "비밀번호를 변경해주세요";
-			url = "/member/change_password";
+			url = "/member/change_password";			
 			rttr.addFlashAttribute("msg", msg);
 			session.setAttribute("change_password", result);
 		}

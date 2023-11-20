@@ -5,14 +5,14 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!doctype html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.101.0">
-    <title>주문정보</title>
+    <title>주문완료</title>
 
     <!-- Bootstrap core CSS -->
 <%@include file="/WEB-INF/views/comm/plugin2.jsp" %>
@@ -52,7 +52,7 @@
 <div class="container">
   <div class="box box-primary">
     <div class="box-body">
-      <h3>카카오 결제및 주문처리가 되었습니다</h3>
+      <h3>주문이 완료되었습니다</h3>
     </div>
   </div>
   <%@include file="/WEB-INF/views/comm/footer.jsp" %>

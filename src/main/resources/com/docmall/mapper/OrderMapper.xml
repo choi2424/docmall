@@ -39,4 +39,20 @@
 		
 	</delete>
 	
+	<insert id="payment_insert" parameterType="com.docmall.domain.PaymentVO">
+		
+		INSERT INTO 
+			PAYMENT (PAY_CODE, ODR_CODE, MBSP_ID, PAY_METHOD, PAY_DATE, PAY_TOT_RICE, PAY_MEMO 
+			<if test="pay_nobank_price != null and pay_nobank_price != ''">
+			 ,PAY_NOBANK_PRICE, PAY_NOBANK_USER, PAY_NOBANK, PAY_BANK_ACCOUNT
+			</if>
+			)
+		VALUES
+			(SEQ_PAYMENT_CODE.NEXTVAL,#{odr_code},#{mbsp_id},#{pay_method},sysdate,#{pay_tot_price},#{pay_memo}
+			<if test="pay_nobank_price != null and pay_nobank_price != ''">
+			,#{pay_nobank_price},#{pay_nobank_user},#{pay_nobank},#{pay_bank_account}
+			</if>
+			)
+	</insert>
+	
 </mapper>

@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!doctype html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -191,10 +191,19 @@
             let unitPrice = cur_btn_change.parent().parent().find("span#unitPrice").text();
             let unitDiscount = cur_btn_change.parent().parent().find("span#unitDiscount").text();
 
-            let unitTotalPrice = cur_btn_change.parent().parent().find("span#unitTotalPrice");
-            let cart_total_price = cur_btn_change.parent().parent().parent().parent().find("span#cart_total_price").text();
-            console.log("총합"+cart_total_price);
+            // 값 파싱
+            unitPrice = parseFloat(unitPrice);
+            unitDiscount = parseFloat(unitDiscount);
+            cart_amount = parseInt(cart_amount, 10);
 
+            // 콘솔 로그 
+            // console.log("unitPrice", unitPrice);
+            // console.log("unitDiscount", unitDiscount);
+            // console.log("cart_amount", cart_amount);
+
+            let unitTotalPrice = cur_btn_change.parent().parent().find("span#unitTotalPrice");
+            
+            // 계산 및 설정
             unitTotalPrice.text((unitPrice - (unitPrice * unitDiscount / 100)) * cart_amount);
             
             // 전체주문금액

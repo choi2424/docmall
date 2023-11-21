@@ -16,4 +16,6 @@ public interface UserProductMapper {
 	);
 	
 	int getTotalCount(Integer cg_code);
+	
+	ProductVO pro_detail(Integer pro_num);
 }

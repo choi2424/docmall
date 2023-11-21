@@ -55,10 +55,10 @@
     <c:forEach items="${pro_list }" var="productVO">
     <div class="col-md-3">
 	    <div class="card mb-4 shadow-sm">
-            <img width="100%" height="200" src="/user/product/imageDisplay?dateFolderName=${productVO.pro_up_folder }&fileName=${productVO.pro_img}">
+            <img class="btn_pro_img" style="cursor: pointer;" data-pro_num="${productVO.pro_num}" width="100%" height="200" src="/user/product/imageDisplay?dateFolderName=${productVO.pro_up_folder }&fileName=${productVO.pro_img}">
 
             <div class="card-body">
-              <p class="card-text">${productVO.pro_name }</p>
+              <p class="card-text btn_pro_img" style="cursor: pointer;" data-pro_num="${productVO.pro_num}">${productVO.pro_name }</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                   <button type="button" name="btn_cart_add" data-pro_num="${productVO.pro_num}" class="btn btn-sm btn-outline-secondary">Cart</button>
@@ -131,35 +131,51 @@
 
 		let actionForm = $("#actionForm");
 
-	    // [이전] 1 2 3 4 5 [다음] 클릭 이벤트 설정. <a>태그
-	    $(".movepage").on("click", function(e) {
-	      e.preventDefault(); // a태그의 href 링크기능을 제거. href속성에 페이지번호를 숨겨둠.
+    // [이전] 1 2 3 4 5 [다음] 클릭 이벤트 설정. <a>태그
+    $(".movepage").on("click", function(e) {
+      e.preventDefault(); // a태그의 href 링크기능을 제거. href속성에 페이지번호를 숨겨둠.
 
-	      actionForm.attr("action", "/user/product/pro_list");
-	      actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+      actionForm.attr("action", "/user/product/pro_list");
+      actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 
-	       actionForm.submit();
-	    });
+        actionForm.submit();
+    });
 
-      //장바구니 추가
-      $("button[name='btn_cart_add']").on("click", function() {
-        // console.log("장바구니");
-        // alert("확인")
-        $.ajax({
-          url: '/user/cart/cart_add',
-          type : 'post',
-          data : { pro_num: $(this).data("pro_num"),cart_amount : 1},
-          dataType : 'text',
-          success : function(result) {
-            if(result == "success") {
-              alert("장바구니에 추가됨");
-              if(confirm("장바구니로 이동하시겠습니까?")){
-                location.href = "/user/cart/cart_list"
-              }
+    //장바구니 추가
+    $("button[name='btn_cart_add']").on("click", function() {
+      // console.log("장바구니");
+      // alert("확인")
+      $.ajax({
+        url: '/user/cart/cart_add',
+        type : 'post',
+        data : { pro_num: $(this).data("pro_num"),cart_amount : 1},
+        dataType : 'text',
+        success : function(result) {
+          if(result == "success") {
+            alert("장바구니에 추가됨");
+            if(confirm("장바구니로 이동하시겠습니까?")){
+              location.href = "/user/cart/cart_list"
             }
           }
-        });
+        }
       });
+    });
+
+    // 상품이미지 또는 상품명 클릭시 상품 상세로 보내는 작업
+    $(".btn_pro_img").on("click",function() {
+      // console.log("상품상세");
+
+      actionForm.attr("action","/user/product/pro_detail");
+
+      let pro_num = $(this).data("pro_num");
+
+      actionForm.find("input[name='pro_num']").remove();
+      // 상품코드 추가 작업 <input type="hidden" name="pro_num" value="상품코드">
+      actionForm.append('<input type="hidden" name="pro_num" value="' + pro_num + '">');
+
+      actionForm.submit();
+    });
+
 
 
 	});

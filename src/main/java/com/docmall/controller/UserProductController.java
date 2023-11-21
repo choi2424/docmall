@@ -72,4 +72,26 @@ public class UserProductController {
 		return FileUtils.getFile(uploadPath + dateFolderName, fileName);
 	}
 		
+	// 상품 상세 , 상품후기
+	@GetMapping("/pro_detail")
+	public void pro_detail(Criteria cri,Integer pro_num ,Integer cg_code ,@ModelAttribute("cg_name") String cg_name, Model model)  throws Exception{
+		
+		// log.info("페이징 정보"+cri);
+		// log.info("상품 코드" + pro_num);
+		
+		ProductVO productVO = userProductService.pro_detail(pro_num);
+		
+		// 클라이언트에서 이미지 출력작업  . \ 역슬래시가 서버로 보낼때 문제가 되어서, / 슬래시 사용하고자
+		productVO.setPro_up_folder(productVO.getPro_up_folder().replace("\\", "/"));
+		
+		model.addAttribute("productVO", productVO);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 }

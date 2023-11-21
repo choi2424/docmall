@@ -134,7 +134,7 @@ public class MemberController {
 	
 	// 회원수정페이지로 이동전 인증 확인 폼
 	@GetMapping("/confirmPw")
-	public void confirmPw(HttpSession session) {
+	public void confirmPw() {
 		log.info("회원수정 전 confirm 확인");
 	}
 	

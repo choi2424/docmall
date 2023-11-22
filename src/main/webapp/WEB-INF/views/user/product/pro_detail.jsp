@@ -44,6 +44,18 @@
           font-size: 3.5rem;
         }
       }
+
+      /* 별 모양 평점 기본선택자. */
+      p#star_rv_score a.rv_score {
+        font-size: 22px;
+        text-decoration: none;
+        color: lightblue;
+      }
+
+      /* 별점에 마우스 오버했을 경우 사용되는 CSS선택자. */
+      p#star_rv_score a.rv_score.on {
+        color: gold;
+      }
     </style>
 
    
@@ -110,14 +122,17 @@
     <div class="col-md-12">
       <div id="tabs">
         <ul>
-          <li><a href="#tabs-1">상품설명</a></li>
-          <li><a href="#tabs-2">상품후기</a></li>
+          <li><a href="#tabs_prodetail">상품설명</a></li>
+          <li><a href="#tabs_proreview">상품후기</a></li>
         </ul>
-        <div id="tabs-1">
+        <div id="tabs_prodetail">
           <p>${productVO.pro_content}</p>
         </div>
-        <div id="tabs-2">
+        <div id="tabs_proreview">
           <p>상품후기목록</p>
+          <div class="row" style="text-align: right;">
+            <div class="col-12"><button class="btn btn-primary" id="btn_review_write">상품후기작성</button></div>
+          </div>
         </div>
       </div>
     </div>
@@ -182,17 +197,137 @@
       $("#tot_price").text(tot_price);
     });
 
-	});
-
-  // 구매하기
-  $("button[name='btn_order']").on("click", function() {
     
-    let url = "/user/order/order_ready?pro_num=" + $(this).data("pro_num") + "&cart_amount=" + $("#btn_quantity").val()
-    console.log(url);
-    location.href = url;
-  });
+    // 구매하기
+    $("button[name='btn_order']").on("click", function() {
+      
+      let url = "/user/order/order_ready?pro_num=" + $(this).data("pro_num") + "&cart_amount=" + $("#btn_quantity").val()
+      console.log(url);
+      location.href = url;
+    });
+    
+    // 상품후기 작성
+    $("#btn_review_write").on("click", function () {
+      $('#review_modal').modal('show')
+    });
+    
+    // 별 평점 클릭시. 평점 태그 5개 ★
+    $("p#star_rv_score a.rv_score").on("click", function(e) {
+      e.preventDefault();
+      
+      // $(this) : 클릭한 a태그
+      // 선택 했을 때 이전 선택자 제거작업.
+      $(this).parent().children().removeClass("on");
+      
+      // 선택한 a태그인 별과 이전 별에 class에 .on을 입혀 바꿔주는 작업.
+      $(this).addClass("on").prevAll("a").addClass("on");
+      
+    });
+    
+    // 상품평 목록 불러오기 (이벤트 사용 x 직접호출)
+    let review_page = 1; // 목록에서 첫번째 페이지를 의미.
+    let url = "/user/review/list" + 상품코드 + "/" + review_page;
 
+    // 상품후기 저장
+    $("#btn_review_save").on("click", function() {
+
+      // 별 평점 값
+      let rew_score = 0;
+      let rew_content = $("#rew_content").val();
+
+      $("p#star_rv_score a.rv_score").each(function(index, item) {
+        if($(this).attr("class") == "rv_score on") {
+          rew_score += 1;
+        }
+      });
+
+      // 별을 선택하지 않았을 경우 체크
+      if(rew_score == 0) {
+        alert("평점을 선택해 주세요.");
+        return;
+      }
+
+      // 후기 체크
+      if(rew_content == "") {
+        alert ("상품 리뷰 내용을 작성 해 주세요");
+        return;
+      }
+
+
+      // ajax로 스프링에서 리뷰데이터를 전송하는 작업.
+      let review_data = {pro_num : $(this).data("pro_num"), rew_content : rew_content, rew_score : rew_score};
+
+      $.ajax({
+        url: '/user/review/new',
+        headers: {
+          "Content-Type" : "application/json", "X-HTTP-Method-Override" : "POST"
+        },
+        type: 'post',
+        data: JSON.stringify(review_data), // 데이터 포맷 object -> json으로 변환
+        dataType: 'text',
+        success: function(result) {
+          if(result == 'success') {
+            alert("상품평이 등록되었습니다.");
+            $("#review_modal").modal('hide'); // 부트스트랩 4.6버전의 자바스크립트 명령어
+
+            // 상품명 목록 불러오는 작업.
+
+          }
+        }
+      })
+
+    });
+    
+    
+    
+    
+  });
   </script>  
+
+  <!-- 상품후기 모델 -->
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+  integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+  crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
+  integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
+  crossorigin="anonymous"></script>
+
+  <div class="modal fade" id="review_modal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">상품후기 작성</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">평점</label>
+              <p id="star_rv_score">
+                <a class="rv_score" href="#">★</a>
+                <a class="rv_score" href="#">★</a>
+                <a class="rv_score" href="#">★</a>
+                <a class="rv_score" href="#">★</a>
+                <a class="rv_score" href="#">★</a>
+              </p>
+            </div>
+            <div class="form-group">
+              <label for="rew_content" class="col-form-label">상품평</label>
+              <textarea class="form-control" id="rew_content" name="rew_content"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" id="btn_review_save" class="btn btn-primary" data-pro_num="${productVO.pro_num}" >상품후기저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   </body>
 </html>
     

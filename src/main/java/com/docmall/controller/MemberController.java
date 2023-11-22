@@ -181,6 +181,7 @@ public class MemberController {
 		model.addAttribute("memberVO",db_vo);
 	}
 	
+	// 회원수정
 	@PostMapping("/modify")
 	public String modify(MemberVO vo, HttpSession session, RedirectAttributes rttr) throws Exception {
 		log.info("정보수정 : " + vo);

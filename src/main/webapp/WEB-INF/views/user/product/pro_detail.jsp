@@ -19,6 +19,30 @@
     <link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+    <script id="reviewTemplate" type="text/x-handlebars-template">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col">번호</th>
+            <th scope="col">리뷰내용</th>
+            <th scope="col">별평점</th>
+            <th scope="col">날짜</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each .}}
+            <tr>
+              <th scope="row">{{rew_num}}</th>
+              <td>{{rew_content}}</td>
+              <td>{{displayStar rew_score}}</td>
+              <td>{{convertDate rew_regdate}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </script>
+    
     <script>
       $( function() {
         $( "#tabs" ).tabs();
@@ -129,7 +153,12 @@
           <p>${productVO.pro_content}</p>
         </div>
         <div id="tabs_proreview">
-          <p>상품후기목록</p>
+          <p>상품후기 목록</p>
+          <div class="row">
+            <div class="col-md-12" id="review_list">
+
+            </div>
+          </div>
           <div class="row" style="text-align: right;">
             <div class="col-12"><button class="btn btn-primary" id="btn_review_write">상품후기작성</button></div>
           </div>
@@ -226,7 +255,75 @@
     
     // 상품평 목록 불러오기 (이벤트 사용 x 직접호출)
     let review_page = 1; // 목록에서 첫번째 페이지를 의미.
-    let url = "/user/review/list" + 상품코드 + "/" + review_page;
+    let url = `/user/review/list/${productVO.pro_num}/` + review_page;
+
+    getReviewInfo(url);
+
+    function getReviewInfo(url) {
+      
+      $.getJSON(url,function(data) {
+
+        // console.log("상품후기" , data.list[0].rew_content);
+        // console.log("페이징정보" , data.pageMaker.total);
+        // review_list
+
+        printReviewList(data.list,$("#review_list"),$("#reviewTemplate"));
+
+      });
+    }
+
+    // 상품 후기작업
+    let printReviewList = function(reviewData, target , template) {
+      let templateObj = Handlebars.compile(template.html());
+      let reviewHtml = templateObj(reviewData);
+
+      // 상품후기목록 위치를 참조하여 , 추가
+      $("#review_list").children().remove();
+      target.append(reviewHtml);
+    }
+
+    // 사용자 정의 Helper (핸들바의 함수정의)
+
+    // 상품후기 등록일 Date포멧 설정
+    Handlebars.registerHelper("convertDate", function(reviewtime) {
+
+      const dateObj = new Date(reviewtime);
+      let year = dateObj.getFullYear();
+      let month = dateObj.getMonth();
+      let date = dateObj.getDate();
+      let hour = dateObj.getHours();
+      let minute = dateObj.getMinutes();
+
+      return year + "/" + month + "/" + date + " " + hour + ":" + minute;
+    })
+
+    // 별평점 숫자 -> 별로 출력하기
+    Handlebars.registerHelper("displayStar", function(rating) {
+
+      let starStr = "";
+      switch(rating) {
+        case 1 :
+          starStr = "★☆☆☆☆"
+          break;
+        case 2 :
+          starStr = "★★☆☆☆"
+          break;
+        case 3 :
+          starStr = "★★★☆☆"
+          break;
+        case 4 :
+          starStr = "★★★★☆"
+          break;
+        case 5 :
+          starStr = "★★★★★"
+          break;
+      }
+      return starStr;
+    })
+
+    // 페이징 작업함수
+
+
 
     // 상품후기 저장
     $("#btn_review_save").on("click", function() {
@@ -269,8 +366,10 @@
           if(result == 'success') {
             alert("상품평이 등록되었습니다.");
             $("#review_modal").modal('hide'); // 부트스트랩 4.6버전의 자바스크립트 명령어
-
+            
             // 상품명 목록 불러오는 작업.
+            getReviewInfo(url);
+
 
           }
         }

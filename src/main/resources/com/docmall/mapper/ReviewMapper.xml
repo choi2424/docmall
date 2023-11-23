@@ -13,4 +13,37 @@
 		
 	</insert>
 	
+	<select id="list" resultType="com.docmall.domain.ReviewVO" parameterType="map">
+		
+		<![CDATA[
+		SELECT 
+    		REW_NUM, MBSP_ID, PRO_NUM, REW_CONTENT, REW_SCORE, REW_REGDATE
+		FROM 
+		    (
+		    SELECT /*+INDEX_DESC(REVIEW_TBL PK_REVIEW_TBL) */
+		        ROWNUM RN, REW_NUM, MBSP_ID, PRO_NUM, REW_CONTENT, REW_SCORE, REW_REGDATE
+		    FROM 
+		        REVIEW_TBL
+		    WHERE 
+		    	PRO_NUM = #{pro_num}
+		    	AND    
+		        ROWNUM <= #{cri.pageNum} * #{cri.amount}
+		    )
+		WHERE 
+		    RN > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+		
+	</select>
+		
+	<select id="listCount" resultType="int" parameterType="integer">
+		
+		SELECT 
+			COUNT(*)
+		FROM
+			REVIEW_TBL
+		WHERE
+			PRO_NUM = #{pro_num}
+		
+	</select>
+	
 </mapper>

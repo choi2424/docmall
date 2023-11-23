@@ -1,5 +1,7 @@
 package com.docmall.controller;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.docmall.domain.MemberVO;
 import com.docmall.domain.ReviewVO;
+import com.docmall.dto.Criteria;
+import com.docmall.dto.PageDTO;
 import com.docmall.service.ReviewService;
 
 import lombok.RequiredArgsConstructor;
@@ -51,10 +55,32 @@ public class ReviewController {
 	// 전통적인 형태의 주소 list?pro_num=10&page=1  -> Rest API개발형태주소 list/10/1
 	@GetMapping("/list/{pro_num}/{page}")
 	public ResponseEntity<Map<String, Object>>list(@PathVariable("pro_num") Integer pro_num , @PathVariable("page") Integer page) throws Exception {
+				
+		// ResponseEntity<Map<String, Object>> : 1) 상품후기목록 데이터  - List<ReviewVO> 2) 페이징 데이터 - PageDTO
+		// ResponseEntityList<ReviewVO> : 1) 상품후기목록 데이터  - List<ReviewVO>
 		
 		ResponseEntity<Map<String, Object>> entity = null;
 		
+		Map<String,Object> map = new HashMap<String,Object>();
 		
+		// 1) 상품후기 목록 데이터
+		Criteria cri = new Criteria();
+		
+		cri.setAmount(5);
+		cri.setPageNum(page);
+		
+		
+		List<ReviewVO> list = reviewService.list(pro_num, cri);
+		
+		// 2) 페이징 데이터
+		int listCount = reviewService.listCount(pro_num);
+		PageDTO pageMaker = new PageDTO(cri, listCount);
+		
+		map.put("list", list);
+		map.put("pageMaker", pageMaker);
+		
+		// jackson-databind 라이브러리에 의하여 map -> json으로 변환되어 ajax호출한 쪽으로 리턴값이 보내진다
+		entity = new ResponseEntity<Map<String,Object>>(map,HttpStatus.OK);
 		
 		return entity;
 	}

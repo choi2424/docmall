@@ -32,5 +32,17 @@ public class ReviewServiceImpl implements ReviewService {
 	public int listCount(Integer pro_num) {
 		// TODO Auto-generated method stub
 		return reviewMapper.listCount(pro_num);
+	}
+
+	@Override
+	public void delete(Long rew_num) {
+		// TODO Auto-generated method stub
+		reviewMapper.delete(rew_num);
+	}
+
+	@Override
+	public void review_modify(ReviewVO vo) {
+		// TODO Auto-generated method stub
+		reviewMapper.review_modify(vo);
 	} 
 }

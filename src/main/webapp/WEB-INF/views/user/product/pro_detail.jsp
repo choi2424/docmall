@@ -28,15 +28,17 @@
             <th scope="col">리뷰내용</th>
             <th scope="col">별평점</th>
             <th scope="col">날짜</th>
+            <th scope="col">비고</th>
           </tr>
         </thead>
         <tbody>
           {{#each .}}
             <tr>
-              <th scope="row">{{rew_num}}</th>
-              <td>{{rew_content}}</td>
-              <td>{{displayStar rew_score}}</td>
-              <td>{{convertDate rew_regdate}}</td>
+              <th scope="row" class="rew_num">{{rew_num}}</th>
+              <td class="rew_content">{{rew_content}}</td>
+              <td class="star rew_score">{{displayStar rew_score}}</td>
+              <td class="rew_regdate">{{convertDate rew_regdate}}</td>
+              <td >{{authControlView mbsp_id rew_num rew_score}}</td>
             </tr>
           {{/each}}
         </tbody>
@@ -76,8 +78,10 @@
         color: lightblue;
       }
 
+      
+
       /* 별점에 마우스 오버했을 경우 사용되는 CSS선택자. */
-      p#star_rv_score a.rv_score.on {
+      .start , p#star_rv_score a.rv_score.on {
         color: gold;
       }
     </style>
@@ -160,7 +164,10 @@
             </div>
           </div>
           <div class="row" style="text-align: right;">
-            <div class="col-12"><button class="btn btn-primary" id="btn_review_write">상품후기작성</button></div>
+            <div class="col-8" id="review_paging">
+
+            </div>
+            <div class="col-4"><button class="btn btn-primary" id="btn_review_write">상품후기작성</button></div>
           </div>
         </div>
       </div>
@@ -226,7 +233,11 @@
       $("#tot_price").text(tot_price);
     });
 
-    
+    // 상품후기작성 폼
+    $("#btn_review_write").on("click",function() {
+      $("#btn_review_save").show();
+      $("#btn_review_modify").hide();
+    })
     // 구매하기
     $("button[name='btn_order']").on("click", function() {
       
@@ -238,6 +249,8 @@
     // 상품후기 작성
     $("#btn_review_write").on("click", function () {
       $('#review_modal').modal('show')
+      $("p#star_rv_score a.rv_score").parent().children().removeClass("on");
+      $("#rew_content").val("");
     });
     
     // 별 평점 클릭시. 평점 태그 5개 ★
@@ -269,21 +282,54 @@
 
         printReviewList(data.list,$("#review_list"),$("#reviewTemplate"));
 
+        // review_paging
+        printPaging(data.pageMaker,$("#review_paging"));
+
       });
     }
 
-    // 상품 후기작업
+    // 1) 상품 후기작업함수
     let printReviewList = function(reviewData, target , template) {
       let templateObj = Handlebars.compile(template.html());
       let reviewHtml = templateObj(reviewData);
 
       // 상품후기목록 위치를 참조하여 , 추가
-      $("#review_list").children().remove();
+      target.children().remove();
       target.append(reviewHtml);
     }
 
-    // 사용자 정의 Helper (핸들바의 함수정의)
+    // 2) 페이징기능 작업함수
+    let printPaging = function(pageMaker , target) {
 
+      let pagingStr = '<nav id="navigation" aria-label="Page navigation example">';
+      pagingStr += '<ul class="pagination">';
+      
+      // 이전표시여부
+      if(pageMaker.prev){
+        pagingStr += '<li class="page-item"><a class="page-link" href="'+ (pageMaker -1) + '">[prev]</a></li>';
+      }
+      // 페이지 번호출력
+      for(let i = pageMaker.startPage; i<=pageMaker.endPage; i++){
+        let className = pageMaker.cri.pageNum == i ? 'active' : '';
+        pagingStr += '<li class="page-item"' + className + '><a class="page-link" href="'+ i +'">' + i + '</a></li>';
+      }
+
+      // 다음표시여부
+      if(pageMaker.prev){
+        pagingStr += '<li class="page-item"><a class="page-link" href="'+ (pageMaker.startPage +1) + '">[prev]</a></li>';
+      }
+
+
+      pagingStr += '</ul>';
+      pagingStr += '</nav>';
+
+      target.children().remove();
+      target.append(pagingStr);
+    }
+
+
+
+    // 사용자 정의 Helper (핸들바의 함수정의)
     // 상품후기 등록일 Date포멧 설정
     Handlebars.registerHelper("convertDate", function(reviewtime) {
 
@@ -303,30 +349,151 @@
       let starStr = "";
       switch(rating) {
         case 1 :
-          starStr = "★☆☆☆☆"
+          starStr = "★☆☆☆☆";
           break;
         case 2 :
-          starStr = "★★☆☆☆"
+          starStr = "★★☆☆☆";
           break;
         case 3 :
-          starStr = "★★★☆☆"
+          starStr = "★★★☆☆";
           break;
         case 4 :
-          starStr = "★★★★☆"
+          starStr = "★★★★☆";
           break;
         case 5 :
-          starStr = "★★★★★"
+          starStr = "★★★★★";
           break;
       }
       return starStr;
     })
 
-    // 페이징 작업함수
+    // 상품후기 수정/삭제 버튼 표시
+    Handlebars.registerHelper("authControlView",function(mbsp_id,rew_num,rew_score) {
+      let str = "";
+      let login_id = '${sessionScope.loginStatus.mbsp_id}';
 
+      // 로그인 한 사용자와 상품후기 등록 사용자의 동일여부체크
+      if(login_id == mbsp_id) {
+        str += '<button type="button" name="btn_review_edit" data-rew_score="' + rew_score + '" class="btn btn-info">수정</button>';
+        str += '<button type="button" name="btn_review_del" data-rew_num="' + rew_num + '" class="btn btn-danger">삭제</button>';
 
+        console.log(str);
+        return new Handlebars.SafeString(str);
+      }
+
+    });
+
+    // 상품후기 수정버튼 클릭
+    $("div#review_list").on("click","button[name='btn_review_edit']",function() {
+      //평점작업
+      let rew_score = $(this).data("rew_score");
+      // console.log(rew_score);
+      $("#star_rv_score a.rv_score").each(function(index,item) {
+        if(index < rew_score){
+          $(item).addClass('on');
+        }else{
+          $(item).removeClass('on');
+        }
+      });
+
+      // 상품후기 내용
+      $("#rew_content").text($(this).parent().parent().find(".rew_content").text());
+      // 상품후기 번호
+      $("#rew_num").text($(this).parent().parent().find(".rew_num").text());
+      // 상품후기 날짜
+      $("#rew_regdate").text($(this).parent().parent().find(".rew_regdate").text());
+
+      $("#btn_review_save").hide();
+      $("#btn_review_modify").show();
+      // 상품후기 수정버튼에 후기번호를 data-rew_num 속성으로 저장
+      // $("#btn_review_modify").data("rew_num",$(this).parent().parent().find(".rew_num").text());
+      $("#review_modal").modal('show'); // 부트스트랩 4.6버전의 자바스크립트 명령어
+      /*
+      console.log("번호",$(this).parent().parent().find(".rew_num").text());
+      console.log("내용",$(this).parent().parent().find(".rew_content").text());
+      console.log("평점",$(this).parent().parent().find(".rew_score").text());
+      console.log("날짜",$(this).parent().parent().find(".rew_regdate").text());
+      */
+    });
+
+    //상품후기 수정하기
+    $("#btn_review_modify").on("click",function() {
+
+      let rew_num = $("#rew_num").text();
+      let rew_content = $("#rew_content").val();
+      //평점
+      let rew_score = 0;
+
+      $("p#star_rv_score a.rv_score").each(function(index, item) {
+        if($(this).attr("class") == "rv_score on") {
+          rew_score += 1;
+        }
+      });
+
+      let review_data = {rew_num : rew_num , rew_content : rew_content , rew_score : rew_score};
+
+      $.ajax({
+        url: '/user/review/modify',
+        headers: {
+          "Content-Type" : "application/json", "X-HTTP-Method-Override" : "PUT"
+        },
+        type: 'PUT',
+        data: JSON.stringify(review_data), // 데이터 포맷 object -> json으로 변환
+        dataType: 'text',
+        success: function(result) {
+          if(result == 'success') {
+            alert("리뷰가 수정되었습니다.");
+            $("#review_modal").modal('hide'); // 부트스트랩 4.6버전의 자바스크립트 명령어
+            
+            // 상품명 목록 불러오는 작업.
+            getReviewInfo(url);
+          }
+        }
+      })
+    })
+
+    // 상품후기 삭제
+    $("div#review_list").on("click",'button[name="btn_review_del"]',function() {
+      // console.log("상품후기 삭제");
+
+      if(!confirm("후기를 삭제하시겠습니까?")) return;
+      
+      let rew_num = $(this).data("rew_num");
+
+      $.ajax({
+        url: '/user/review/delete/' + rew_num,
+        headers: {
+          "Content-Type" : "application/json", "X-HTTP-Method-Override" : "DELETE"
+        },
+        type: 'delete',
+        dataType: 'text',
+        success: function(result) {
+          if(result == 'success') {
+            alert("상품이 삭제되었습니다");
+            
+            url = `/user/review/list/${productVO.pro_num}/` + review_page;
+            getReviewInfo(url);
+          }
+        }
+      })
+    })
+
+    // 페이징번호 클릭
+    $("div#review_paging").on("click","nav#navigation ul a",function(e) {
+      e.preventDefault();
+      // console.log("페이지번호");
+
+      review_page = $(this).attr("href"); // 상품후기 선택 페이지번호
+
+      url = `/user/review/list/${productVO.pro_num}/` + review_page;
+
+      getReviewInfo(url); // 스프링에서 상품후기 , 페이지번호 데이터 가져오는 함수
+
+    })
 
     // 상품후기 저장
     $("#btn_review_save").on("click", function() {
+
 
       // 별 평점 값
       let rew_score = 0;
@@ -397,6 +564,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">상품후기 작성</h5>
+          <b>   </b><span id="rew_num"></span><b>   </b><span id="rew_regdate"></span>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -422,6 +590,7 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           <button type="button" id="btn_review_save" class="btn btn-primary" data-pro_num="${productVO.pro_num}" >상품후기저장</button>
+          <button type="button" id="btn_review_modify" class="btn btn-primary" data-pro_num="${productVO.pro_num}" >상품후기수정</button>
         </div>
       </div>
     </div>

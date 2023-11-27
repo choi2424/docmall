@@ -9,9 +9,11 @@ import javax.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -81,6 +83,38 @@ public class ReviewController {
 		
 		// jackson-databind 라이브러리에 의하여 map -> json으로 변환되어 ajax호출한 쪽으로 리턴값이 보내진다
 		entity = new ResponseEntity<Map<String,Object>>(map,HttpStatus.OK);
+		
+		return entity;
+	}
+	
+	// 상품후기 삭제
+	@DeleteMapping("/delete/{rew_num}")
+	public ResponseEntity<String> delete(@PathVariable("rew_num") Long rew_num) throws Exception {
+		
+		ResponseEntity<String> entity = null;
+		
+		// db연동작업
+		reviewService.delete(rew_num);
+		
+		entity = new ResponseEntity<String>("success",HttpStatus.OK);
+		
+		return entity;
+	}
+	
+	@PutMapping(value = "/modify", consumes = "application/json" , produces = {MediaType.TEXT_PLAIN_VALUE})
+	public ResponseEntity<String> review_modify(@RequestBody ReviewVO vo, HttpSession session) throws Exception  {
+		
+//		log.info("리뷰vo : " + vo);
+		
+		ResponseEntity<String> entity = null;
+		
+		String mbsp_id = ((MemberVO)session.getAttribute("loginStatus")).getMbsp_id();
+		
+		vo.setMbsp_id(mbsp_id);
+		
+		reviewService.review_modify(vo);
+		
+		entity = new ResponseEntity<String>("success",HttpStatus.OK);
 		
 		return entity;
 	}

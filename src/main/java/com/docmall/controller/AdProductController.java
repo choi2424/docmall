@@ -256,18 +256,9 @@ public class AdProductController {
 	
 	@PostMapping("/pro_edit")
 	public String pro_edit(Criteria cri,ProductVO vo,MultipartFile uploadFile ,RedirectAttributes rttr) throws Exception{
-		
-		// 상품 리스트에서 사용할 정보(검색 페이징정보)
-		log.info("검색 페이징 정보" + cri);
-		// 상품 수정내용
-		log.info("상품수정내용" + vo);
-		
+				
 		vo.setPro_up_folder(vo.getPro_up_folder().replace("/", "\\"));
 		
-		// 작업
-		// 파일이 변경될 경우 해야 할 작업 1) 기존이미지 파일 삭제 2) 업로드 작업
-		// 클라이언트 파일명을 DB에 저장하는 부분
-		// 첨부파일 확인할 때 조건식으로 사용 if(uploadFile.getSize() > 0) 
 		if(!uploadFile.isEmpty()) {
 			
 			// 1)기존 이미지 파일 삭제 작업
@@ -289,6 +280,7 @@ public class AdProductController {
 		return "redirect:/admin/product/pro_list" + cri.getListLink();
 	}
 	
+	// 상품수정
 	@PostMapping("/pro_delete")
 	public String pro_delete(RedirectAttributes rttr,Criteria cri,Integer pro_num) {
 		

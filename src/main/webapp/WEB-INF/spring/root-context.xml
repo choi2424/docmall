@@ -35,11 +35,20 @@
 	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
 		<constructor-arg ref="hikariConfig" />
 	</bean>
+	
+	<!-- 트랜잭션 설정구문 -->
+   <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+      <property name="dataSource" ref="dataSource"></property>
+   </bean>
+   
+   <tx:annotation-driven/> 
 		
 	<!-- mybatis-spring, mybatis 라이브러리를 이용한 설정작업 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>	
+	
+	
 	
 	<!-- 서비스 패키지 -->	
 	<context:component-scan base-package="com.docmall.service" />

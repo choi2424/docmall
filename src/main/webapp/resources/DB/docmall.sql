@@ -346,21 +346,25 @@ DELETE FROM CART_TBL
 WHERE CART_CODE = #{cart_code}
 
 -- 주문 테이블
---5.주문내용 테이블  (구매자의 정보)
+--5.주문내용 테이블. 구매자의 정보
 CREATE TABLE ORDER_TBL(
-        ORD_CODE            NUMBER                  PRIMARY KEY,
-        MBSP_ID             VARCHAR2(15)            NOT NULL,
-        ORD_NAME            VARCHAR2(30)            NOT NULL,
-        ORD_ZIPCODE         CHAR(5)                 NOT NULL,
-        ORD_ADDR_BASIC      VARCHAR2(50)            NOT NULL,
-        ORD_ADDR_DETAIL     VARCHAR2(50)            NOT NULL,
-        ORD_TEL             VARCHAR2(20)            NOT NULL,
-        ORD_PRICE           NUMBER                  NOT NULL,  -- 총주문금액. 선택
-        ORD_REGDATE         DATE DEFAULT SYSDATE    NOT NULL,
-        ORD_STATUS          VARCHAR2(20)            NOT NULL,  -- 주문상태
-        PAYMENT_STATUS      VARCHAR2(20)            NOT NULL,  -- 결제상태
-        FOREIGN KEY(MBSP_ID) REFERENCES MBSP_TBL(MBSP_ID)
+        ORD_CODE            NUMBER                  ,--PRIMARY KEY, -- 주문 코드
+        MBSP_ID             VARCHAR2(15)            NOT NULL, -- 구매자 ID
+        ORD_NAME            VARCHAR2(30)            NOT NULL, -- 수령자 성명
+        ORD_ZIPCODE         CHAR(5)                 NOT NULL, -- 우편주소
+        ORD_ADDR_BASIC      VARCHAR2(50)            NOT NULL, -- 주소
+        ORD_ADDR_DETAIL     VARCHAR2(50)            NOT NULL, -- 상세주소
+        ORD_TEL             VARCHAR2(20)            NOT NULL, -- 전화번호
+        ORD_PRICE           NUMBER                  NOT NULL, -- 총주문금액. 선택
+        ORD_REGDATE         DATE DEFAULT SYSDATE    NOT NULL, -- 주문날자
+        ORD_STATUS          VARCHAR2(20)            NOT NULL, -- 주문 상태
+        PAYMENT_STATUS      VARCHAR2(20)            NOT NULL -- 결제 상태
+        --FOREIGN KEY(MBSP_ID)    REFERENCES MBSP_TBL(MBSP_ID)
 );
+
+ALTER TABLE ORDER_TBL
+ADD CONSTRAINT PK_ORDER_TBL PRIMARY KEY(ORD_CODE);
+
 --6.주문상세 테이블  (구매한 물품의 정보)
 CREATE TABLE ORDETAIL_TBL(
         ORD_CODE        NUMBER      NOT NULL REFERENCES ORDER_TBL(ORD_CODE),
@@ -370,8 +374,14 @@ CREATE TABLE ORDETAIL_TBL(
         PRIMARY KEY (ORD_CODE ,PRO_NUM) 
 );
 
+
+
+drop table ORDER_TBL;
+
 -- 주문번호 : 시퀀스생성
 CREATE SEQUENCE SEQ_ORD_CODE;
+
+drop SEQUENCE SEQ_ORD_CODE;
 -- 결제테이블 
 CREATE TABLE PAYMENT (
         PAY_CODE            NUMBER          NOT NULL, -- 일련번호
@@ -387,6 +397,10 @@ CREATE TABLE PAYMENT (
         
         PAY_MEMO            VARCHAR2(100)   NULL      -- 메모        
 );
+
+drop sEQUENCE SEQ_PAYMENT_CODE;
+
+commit;
 
 CREATE SEQUENCE SEQ_PAYMENT_CODE;
 
@@ -438,6 +452,45 @@ create sequence SEQ_REVIEW_TBL;
 INSERT INTO 
     REVIEW_TBL (REW_NUM, MBSP_ID, PRO_NUM, REW_CONTENT, REW_SCORE, REW_REGDATE)
 VALUES
-    (SEQ_REVIEW_TBL.NEXTVAL,)
+    (SEQ_REVIEW_TBL.NEXTVAL,);
+
+-- 리뷰 상품 후기
+<![CDATA[
+		select 
+    		REW_NUM, MBSP_ID, PRO_NUM, REW_CONTENT, REW_SCORE, REW_REGDATE
+		from 
+		    (
+		    select /*+INDEX_DESC(REVIEW_TBL PK_REVIEW_TBL) */
+		        rownum rn, REW_NUM, MBSP_ID, PRO_NUM, REW_CONTENT, REW_SCORE, REW_REGDATE
+		    from 
+		        REVIEW_TBL
+		    where 
+		    	PRO_NUM = #{pro_num}
+		    	and    
+		        rownum <= #{cri.pageNum} * #{cri.amount}
+		    )
+		where 
+		    rn > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+
+-- 리뷰 페이징 
+
+
+  
+   -- 주문 상세 정보를 가져올 쿼리문. (주문상세테이블, 상품테이블 조인)
+   -- JOIN : 1. 오라클 조인 2. ANSI-SQL 표준조인
+
+   -- 오라클
+   SELECT
+       ot.ORD_CODE, ot.PRO_NUM, ot.DT_AMOUNT,
+       pt.CG_CODE, pt.PRO_NAME, pt.PRO_PRICE, pt.PRO_UP_FOLDER, pt.PRO_IMG, pt.PRO_AMOUNT, pt.PRO_BUY
+   FROM
+       ORDETAIL_TBL ot, PRODUCT_TBL pt
+   WHERE
+       ot.PRO_NUM = pt.PRO_NUM
+   AND
+       ot.ORD_CODE = #{}
     
+
+
 commit;

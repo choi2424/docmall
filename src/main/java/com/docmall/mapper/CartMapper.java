@@ -18,4 +18,5 @@ public interface CartMapper {
 	void cart_list_del(Long cart_code);
 	
 	void cart_checked_del(Long cart_code);
+	
 }

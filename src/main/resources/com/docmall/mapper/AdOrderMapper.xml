@@ -4,20 +4,18 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.docmall.mapper.AdOrderMapper">
 
-<!-- 공통된 sql구문작업 : 검색조건 -->
-   <sql id="criteria">
+	<!-- 공통된 sql구문작업 : 검색조건 -->
+	<!-- 검색기능을 사용하지 않으면 동작x -->
+   	<sql id="criteria">
       <trim prefix="(" suffix=") AND" prefixOverrides="OR">
-         <foreach collection="typeArr" item="type">
+         <foreach collection="cri.typeArr" item="type">
             <trim prefix="OR">
                <choose>
-                  <when test="type == 'N'.toString()">
-                            ORD_NAME like '%' || #{keyword} || '%'
+                  <when test="cri.type == 'N'.toString()">
+                            ORD_NAME like '%' || #{cri.keyword} || '%'
                   </when>
-                  <when test="type == 'C'.toString()">
-                            ORD_CODE like '%' || #{keyword} || '%'
-                  </when>
-                  <when test="type == 'P'.toString()">
-                     PAYMENT_STATUS like '%' || #{keyword} || '%'
+                  <when test="cri.type == 'C'.toString()">
+                            ORD_CODE like '%' || #{cri.keyword} || '%'
                   </when>
                </choose>
             </trim>
@@ -26,36 +24,45 @@
    
    </sql>
 
+	<sql id="period">
+		
+		<if test="start_date != null and !start_date.equals('')">
+			<![CDATA[
+				ORD_REGDATE >= TO_DATE(#{start_date}) and ORD_REGDATE < TO_DATE(#{end_date}) + 1 and
+			]]>
+		</if>
+	</sql>
 	
-	
- <!--  CDATA 섹션 -->
-   <select id="order_list" resultType="com.docmall.domain.OrderVO" parameterType="com.docmall.dto.Criteria">
-      <![CDATA[
-      select 
-          ORD_CODE, MBSP_ID, ORD_NAME, ORD_ZIPCODE, ORD_ADDR_BASIC, ORD_ADDR_DETAIL, ORD_TEL, ORD_PRICE, ORD_REGDATE, ORD_STATUS, PAYMENT_STATUS
-      from 
-          (
-          select /*+INDEX_DESC(ORDER_TBL PK_ORDER_TBL) */
-              rownum rn, ORD_CODE, MBSP_ID, ORD_NAME, ORD_ZIPCODE, ORD_ADDR_BASIC, ORD_ADDR_DETAIL, ORD_TEL, ORD_PRICE, ORD_REGDATE, ORD_STATUS, PAYMENT_STATUS
-          from 
-              ORDER_TBL
-          where 
-          ]]>
+	<!--  CDATA 섹션 -->
+   	<select id="order_list" resultType="com.docmall.domain.OrderVO" parameterType="map">
+    	<![CDATA[
+      	select 
+        	ORD_CODE, MBSP_ID, ORD_NAME, ORD_ZIPCODE, ORD_ADDR_BASIC, ORD_ADDR_DETAIL, ORD_TEL, ORD_PRICE, ORD_REGDATE, ORD_STATUS, PAYMENT_STATUS
+      	from 
+        	(select /*+INDEX_DESC(ORDER_TBL PK_ORDER_TBL) */
+        		rownum rn, ORD_CODE, MBSP_ID, ORD_NAME, ORD_ZIPCODE, ORD_ADDR_BASIC, ORD_ADDR_DETAIL, ORD_TEL, ORD_PRICE, ORD_REGDATE, ORD_STATUS, PAYMENT_STATUS
+          	
+          	from 
+            	ORDER_TBL
+          	where 
+        ]]>
           
-          <include refid="criteria"></include>
+        <include refid="criteria"></include>
+        <include refid="period"></include>
           
-          <![CDATA[
-              rownum <= #{pageNum} * #{amount}
-          )
-      where 
-          rn > (#{pageNum} -1) * #{amount}
-      ]]>
+        <![CDATA[
+            	rownum <= #{cri.pageNum} * #{cri.amount}
+        	)
+		where 
+        	rn > (#{cri.pageNum} -1) * #{cri.amount}
+        ]]>
    </select>
    
    <select id="getTotalCount" resultType="int">
 	 	select count(*) from ORDER_TBL where
       
       		<include refid="criteria"></include>
+      		<include refid="period"></include>
       
       	ORD_CODE > 0
    </select>
@@ -91,8 +98,8 @@
 	
 	<resultMap type="com.docmall.domain.OrderDetailProductVO" id="orderDetailProductMap">
 	
-	<collection property="orderDetailVO" resultMap="orderDetailMap"></collection>
-	<collection property="productVO" resultMap="productMap"></collection>
+		<collection property="orderDetailVO" resultMap="orderDetailMap"></collection>
+		<collection property="productVO" resultMap="productMap"></collection>
 	
 	</resultMap>
 	

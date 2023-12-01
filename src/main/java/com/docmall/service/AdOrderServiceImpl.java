@@ -2,6 +2,7 @@ package com.docmall.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import com.docmall.domain.OrderDetailInfoVO;
@@ -19,15 +20,15 @@ public class AdOrderServiceImpl implements AdOrderService {
 	private final AdOrderMapper adOrderMapper;
 
 	@Override
-	public List<OrderVO> order_list(Criteria cri) {
+	public List<OrderVO> order_list(Criteria cri,String start_date,String end_date) {
 		// TODO Auto-generated method stub
-		return adOrderMapper.order_list(cri);
+		return adOrderMapper.order_list(cri, start_date, end_date);
 	}
 
 	@Override
-	public int getTotalCount(Criteria cri) {
+	public int getTotalCount(Criteria cri,String start_date,String end_date) {
 		// TODO Auto-generated method stub
-		return adOrderMapper.getTotalCount(cri);
+		return adOrderMapper.getTotalCount(cri,start_date,end_date);
 	}
 
 	@Override

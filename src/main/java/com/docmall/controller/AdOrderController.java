@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,34 +31,36 @@ import lombok.extern.log4j.Log4j;
 @RequestMapping("/admin/order/*")
 public class AdOrderController {
 
-	   private final AdOrderService adOrderService;
+		private final AdOrderService adOrderService;
 	   
-	   // 메인및썸네일 이미지업로드 폴더경로 주입작업
-	   @Resource(name = "uploadPath") // servlet-context.xml 의 bean이름 참조를 해야 함.
-	   private String uploadPath;
+		// 메인및썸네일 이미지업로드 폴더경로 주입작업
+		@Resource(name = "uploadPath") // servlet-context.xml 의 bean이름 참조를 해야 함.
+		private String uploadPath;
 	   
-	   //상품리스트.  (목록과페이징)
-	   @GetMapping("/order_list")
-	   public void order_list(Criteria cri, Model model) throws Exception {
+		// 상품리스트.  (목록과페이징)
+	   	@GetMapping("/order_list")
+	   	public void order_list(Criteria cri, Model model,@ModelAttribute("start_date") String start_date,
+			   @ModelAttribute("end_date")String end_date) throws Exception {
 	         
-	      // 10 -> 2
-	      cri.setAmount(5);
-	         
-	      //log.info("리스트 참조" + cri);
-	
-	      List<OrderVO> order_list = adOrderService.order_list(cri);
-	      
-	      
-	      // 날짜폴더의 역슬래시를 슬래시로 바꾸는 작업.  이유? 역슬래시로 되어있는 정보가 스프링으로 보내는 요청데이타에 사용되면 에러발생.
-	      // 스프링에서 처리 안하면, 자바스크립트에서 처리할 수도 있다.
-	      // pro_list.forEach(vo -> {
-	      // vo.setPro_up_folder(vo.getPro_up_folder().replace("\\", "/"));
-	      // });
-	      model.addAttribute("order_list", order_list);
-	      
-	      int totalCount = adOrderService.getTotalCount(cri);
-	      model.addAttribute("pageMaker", new PageDTO(cri, totalCount));
-	   }
+		// 10 -> 2
+		cri.setAmount(2);
+		     
+		//log.info("리스트 참조" + cri);
+		
+		List<OrderVO> order_list = adOrderService.order_list(cri, start_date, end_date);
+		  
+		  
+		// 날짜폴더의 역슬래시를 슬래시로 바꾸는 작업.  이유? 역슬래시로 되어있는 정보가 스프링으로 보내는 요청데이타에 사용되면 에러발생.
+		// 스프링에서 처리 안하면, 자바스크립트에서 처리할 수도 있다.
+		// pro_list.forEach(vo -> {
+		// vo.setPro_up_folder(vo.getPro_up_folder().replace("\\", "/"));
+		// });
+		model.addAttribute("order_list", order_list);
+		  
+		int totalCount = adOrderService.getTotalCount(cri, start_date, end_date);
+		model.addAttribute("pageMaker", new PageDTO(cri, totalCount));
+		
+	   	}
 	   
 	   // 주문상세 방법1. 주문상세 정보가 클라이언트 json형태로 변환되어 보내진다.(pom.xml에 jaskson-databind 라이브러리 백그라운드로 작동)
 	   @GetMapping("/order_detail_info1/{ord_code}")

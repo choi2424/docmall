@@ -186,6 +186,9 @@
         type : 'post',
         data : {cart_code : cart_code, cart_amount : cart_amount},
         dataType : 'text',
+        beforeSend : function(xhr) {
+          xhr.setRequestHeader("AJAX","true");
+        },
         success : function(result) {
           if(result == 'success') {
             let unitPrice = cur_btn_change.parent().parent().find("span#unitPrice").text();
@@ -209,6 +212,11 @@
             // 전체주문금액
             fn_cart_sumPrice();
           }
+        },
+        error : function(xhr, status, error) {
+          alert(status);
+          alert("로그인시간이 만료되었습니다");
+          location.href = "/member/login";
         }
       });
     });
@@ -229,6 +237,9 @@
           type : 'post',
           data : {cart_code : cart_code},
           dataType : 'text',
+          beforeSend : function(xhr) {
+          xhr.setRequestHeader("AJAX","true");
+          },
           success : function(result) {
             if(result == 'success') {
               alert("삭제되었습니다");
@@ -237,6 +248,11 @@
 
               fn_cart_sumPrice();
             }
+          },
+          error : function(xhr, status, error) {
+            alert(status);
+            alert("로그인시간이 만료되었습니다");
+            location.href = "/member/login";
           }
         });
       }

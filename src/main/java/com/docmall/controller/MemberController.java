@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
-@RequestMapping("/member/**")
+@RequestMapping("/member/*")
 @Controller
 @RequiredArgsConstructor // final 필드만 매개변수가 있는 생성자를 만들어주고 스프링에 인하여 생성자 주입을 받게된다.
 public class MemberController {
@@ -105,8 +105,15 @@ public class MemberController {
 			if(passwordEncoder.matches(dto.getMbsp_password(), db_vo.getMbsp_password())) {
 				// 로그인 성공결과로 서버측의 메모리를 사용하는 세션형태작업
 				session.setAttribute("loginStatus", db_vo);
-				url = "/"; // 메인페이지 주소
 				
+				// 인증이 없는 상태에서 인증이 필요한 페이지를 접근했을때 
+				if(session.getAttribute("targetUrl") != null) {
+					url = (String) session.getAttribute("targetUrl");
+				
+				}else {
+					url = "/"; // 메인페이지 주소
+				
+				}				
 			}else {
 				// 비밀번호가 일치하지 않음
 				url = "/member/login"; // 로그인 폼주소

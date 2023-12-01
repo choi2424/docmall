@@ -26,7 +26,7 @@ public class AdminController {
 	private final PasswordEncoder passwordEncoder;
 	
 	// 관리자 로그인용 페이지
-	@GetMapping("intro")
+	@GetMapping("/intro")
 	public String adminLogin() {
 		log.info("관리자 로그인 페이지");
 		
@@ -54,7 +54,14 @@ public class AdminController {
 				// 로그인 시간 업데이트
 				adminservice.admin_visit_date(vo.getAdmin_id());
 				
-				url = "/admin/admin_menu"; //관리자 메인페이지 주소
+				if(session.getAttribute("targetUrl") != null) {
+					url = (String) session.getAttribute("targetUrl");
+				
+				}else {					
+					url = "/admin/admin_menu"; //관리자 메인페이지 주소
+					
+				}
+				
 			}else {
 				// 비밀번호가 일치하지 않음
 				url = "/admin/intro"; // 로그인 폼주소
